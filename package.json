@@ -1,0 +1,69 @@
+{
+  "private": true,
+  "scripts": {
+    "build": "next build",
+    "dev": "next dev",
+    "lint": "next lint",
+    "lint-staged": "lint-staged",
+    "prettier": "prettier --write --ignore-unknown .",
+    "prettier:check": "prettier --check --ignore-unknown .",
+    "start": "next start",
+    "test": "yarn prettier:check && yarn lint",
+    "db:up": "docker-compose up -d",
+    "db:down": "docker-compose down"
+  },
+  "git": {
+    "pre-commit": "lint-staged"
+  },
+  "lint-staged": {
+    "*": "prettier --write --ignore-unknown"
+  },
+  "dependencies": {
+    "@emotion/react": "11.11.1",
+    "@emotion/styled": "11.11.0",
+    "@headlessui/react": "1.7.17",
+    "@heroicons/react": "1.0.6",
+    "@material-ui/icons": "4.11.3",
+    "@metamask/sdk-react": "0.14.0",
+    "@mui/icons-material": "5.14.19",
+    "@mui/material": "5.14.19",
+    "@next-auth/prisma-adapter": "1.0.3",
+    "@prisma/client": "4.10.1",
+    "clsx": "1.2.1",
+    "date-fns": "2.29.3",
+    "dinero.js": "2.0.0-alpha.8",
+    "ms": "3.0.0-canary.1",
+    "next": "14.0.3-canary.7",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-markdown": "8.0.2",
+    "server-only": "0.0.1",
+    "styled-components": "6.0.0-beta.2",
+    "use-count-up": "3.0.1",
+    "vercel": "30.2.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/forms": "0.5.3",
+    "@tailwindcss/typography": "0.5.9",
+    "@types/ms": "0.7.31",
+    "@types/next-auth": "3.13.0",
+    "@types/node": "18.11.17",
+    "@types/react": "18.0.26",
+    "@types/react-dom": "18.0.9",
+    "@vercel/git-hooks": "1.0.0",
+    "autoprefixer": "10.4.13",
+    "eslint": "8.30.0",
+    "eslint-config-next": "13.1.0",
+    "lint-staged": "13.1.0",
+    "postcss": "8.4.21",
+    "prettier": "2.8.1",
+    "prettier-plugin-tailwindcss": "0.2.1",
+    "prisma": "4.10.1",
+    "tailwindcss": "3.3.1",
+    "ts-node": "10.7.0",
+    "typescript": "4.9.4"
+  },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
+  }
+}

@@ -6,7 +6,25 @@ import { GlobalNav } from '#/ui/global-nav';
 import { Metadata } from 'next';
 import { Navbar } from '#/ui/navbar';
 import App from './app';
-import { MetaMaskProvider } from '@metamask/sdk-react';
+// import { MetaMaskProvider } from '@metamask/sdk-react';
+// import { AuthProvider } from 'lib/stores/auth.store';
+// import { CredentialsProvider } from 'lib/stores/credentials.store';
+import { WagmiConfig, createConfig, mainnet } from 'wagmi'
+import { createPublicClient, http } from 'viem'
+import { Web3Modal } from '@web3modal/react';
+
+import { SSXProvider } from '#/ui/_ssx';
+
+
+const config = createConfig({
+  autoConnect: true,
+  publicClient: createPublicClient({
+    chain: mainnet,
+    transport: http(),
+  }),
+})
+
+
 
 // export const metadata: Metadata = {
 //   title: {
@@ -35,17 +53,26 @@ export default function RootLayout({
   return (
     <html lang="en" className="[color-scheme:dark]">
       <body className="bg-gray-100 overflow-y-scroll pb-36">
-        <MetaMaskProvider debug={false} sdkOptions={{
+        <SSXProvider>
+          <App>
+            {children}
+          </App>
+        </SSXProvider>
+        {/* <MetaMaskProvider debug={false} sdkOptions={{
           checkInstallationImmediately: false,
           dappMetadata: {
             name: "Sapien Truedot Demo",
             url: window.location.host,
           }
         }}>
-          <App>
-            {children}
-          </App>
-        </MetaMaskProvider>
+          <AuthProvider>
+            <CredentialsProvider>
+              <App>
+                {children}
+              </App>
+            </CredentialsProvider>
+          </AuthProvider>
+        </MetaMaskProvider> */}
       </body>
     </html>
   );

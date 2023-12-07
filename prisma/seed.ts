@@ -4,13 +4,26 @@ const prisma = new PrismaClient()
 
 const userData: Prisma.UserCreateInput[] = [
   {
-    name: 'Alice',
-    email: 'alice@truedot.ai',
+    name: 'Ankit',
+    email: 'ankit@truedot.ai',
     posts: {
       create: [
         {
           title: 'Adoption of Decentralized Technologies',
           content: 'A significant majority of Web3 developers (78%) report a growing interest in decentralized technologies, with a particular focus on blockchain and decentralized finance (DeFi) applications. This trend is driven by a desire for more secure, transparent, and efficient systems, as well as the burgeoning market opportunities in these areas.',
+          published: true,
+        },
+      ],
+    },
+  },
+  {
+    name: 'Teja',
+    email: 'teja@truedot.ai',
+    posts: {
+      create: [
+        {
+          title: 'Challenges in Scalability and Performance',
+          content: 'Scalability and performance issues are the top challenges faced by 65% of Web3 developers. These challenges stem from the limitations of current blockchain infrastructures and the complexity of developing scalable decentralized applications (dApps) that can handle high transaction volumes without compromising on speed or security.',
           published: true,
         },
       ],

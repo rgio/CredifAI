@@ -14,6 +14,29 @@ model Post {
   published Boolean @default(false)
   author    User?   @relation(fields: [authorId], references: [id])
   authorId  String?
+  comments  Comment[]
+
+  @@map(name: "posts")
+}
+
+model Comment {
+  id        String @id @default(cuid())
+  content   String
+  opinion   String
+  author    User?  @relation(fields: [authorId], references: [id])
+  authorId  String?
+  post      Post?  @relation(fields: [postId], references: [id])
+  postId    String?
+
+  @@map(name: "comments")
+}
+
+model Document {
+  id        String @id @default(cuid())
+  url       String
+  filename  String
+
+  @@map(name: "documents")
 }
 
 model Account {
@@ -57,6 +80,7 @@ model User {
   createdAt     DateTime  @default(now()) @map(name: "created_at")
   updatedAt     DateTime  @updatedAt @map(name: "updated_at")
   posts         Post[]
+  comments      Comment[]
   accounts      Account[]
   sessions      Session[]
 

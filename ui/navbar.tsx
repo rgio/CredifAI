@@ -12,11 +12,18 @@
   }
   ```
 */
-import { Fragment } from 'react'
+const util = require('util');
+
+import { useEffect, useState } from 'react'
 import { Menu, Popover, Transition } from '@headlessui/react'
+import { ConnectWalletButton } from './connect-wallet-button';
+import { useSSX } from './_ssx';
+import { useTranslation } from 'react-i18next';
 // import { MagnifyingGlassIcon } from '@heroicons/react/20/solid'
 // import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import SearchIcon from '@mui/icons-material/Search';
+import SendIcon from '@mui/icons-material/Send';
+import QuestionMark from '@mui/icons-material/QuestionMark';
 
 const user = {
   name: 'Chelsea Hagon',
@@ -40,7 +47,51 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-export function Navbar({ account, connectAccount }: { account: any, connectAccount: any }) {
+enum ModalState {
+  SignIn,
+  CreateVault,
+  None,
+}
+
+export function Navbar() {
+  const { ssx, signingIn } = useSSX();
+  const { t } = useTranslation('sidebar');
+
+  const [showSpinner, setShowSpinner] = useState(false);
+  const [modalState, setModalState] = useState<ModalState>(ModalState.SignIn);
+  const [signedIn, setSignedIn] = useState(false);
+
+  useEffect(() => {
+    //console.log(`ssx after sign in:\n ${util.inspect(ssx)}`)
+    // console.log(`SSX KEYS: ${util.inspect(ssx?.storage.list())}`);
+    //const { data } = ssx && ssx.storage.list();
+    console.log(`SSX KEYS: ${util.inspect(ssx?.storage.list())}`);
+    window.SSX = ssx;
+  }, [signedIn]);
+
+  const handleSignin = async () => {
+    if (ssx) {    
+      setShowSpinner(true);
+      try {
+        await ssx.signIn();
+        // check if orbit exists
+        const orbitExists = await (ssx?.storage as any).activateSession();
+        // move to create orbit modal, if no orbit exists
+        if (!orbitExists) {
+          setShowSpinner(false);
+          setModalState(ModalState.CreateVault);
+          return;
+        }
+        // get or create openAI Key
+        //await checkAPIKey();
+      } catch (error) {
+        console.error(error);
+      } 
+      setShowSpinner(false);
+      setSignedIn(true)
+    }
+  };
+
   return (
     <>
       {/* When the mobile menu is open, add `overflow-hidden` to the `body` element to prevent double scrollbars */}
@@ -55,7 +106,7 @@ export function Navbar({ account, connectAccount }: { account: any, connectAccou
       >
         {({ open }) => (
           <> */}
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="mx-auto border-gray-300 border-b border-r-0 w-full px-4 sm:px-6 lg:px-8">
               <div className="relative flex justify-between lg:gap-8 xl:grid xl:grid-cols-12">
                 <div className="flex md:absolute md:inset-y-0 md:left-0 lg:static xl:col-span-2">
                   {/* <div className="flex flex-shrink-0 items-center">
@@ -75,17 +126,20 @@ export function Navbar({ account, connectAccount }: { account: any, connectAccou
                         Search
                       </label>
                       <div className="relative">
-                        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                        {/* <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                           <SearchIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
-                          {/* <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" aria-hidden="true" /> */}
-                        </div>
+                          {/* <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" aria-hidden="true" /> 
+                        </div> */}
                         <input
                           id="search"
                           name="search"
-                          className="block w-full rounded-md border-0 bg-white py-1.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
-                          placeholder="Search"
+                          className="block w-full rounded-full border-0 bg-gray-100 py-1.5 pl-5 pr-3 h-10 text-2xl text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+                          placeholder="Ask a question about your data..."
                           type="search"
                         />
+                        <div className="pointer-cursor absolute inset-y-0 right-0 flex items-center pr-3">
+                          <SendIcon className="h-5 w-5 text-gray-400 focus:cursor-pointer focus:text-indigo-500" aria-hidden="true" />
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -150,12 +204,19 @@ export function Navbar({ account, connectAccount }: { account: any, connectAccou
                     </Transition>
                   </Menu> */}
 
-                  <button
+                  {/* <button
                     onClick={connectAccount}
                     className="ml-6 inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                   >
                     {account ? account.slice(0,8) + '...' : 'Connect'}
-                  </button>
+                  </button> */}
+                  <ConnectWalletButton
+                    handleSignin={handleSignin}
+                    showSpinner={signingIn || showSpinner}
+                    ssx={ssx}
+                    t={t}
+                  />
+                  
                 </div>
               </div>
             </div>

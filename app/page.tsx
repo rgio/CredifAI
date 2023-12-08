@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 export default function Page() {
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 mt-16">
       <div/>
       <div className="space-y-20 text-white">
         {demos.map((section) => {

@@ -19,6 +19,7 @@ export default {
         blue: '#3993DD',
         turquoise: '#29E7CD',
         orange: '#F7AA2F',
+        red: '#a30b1b',
         gray: colors.zinc,
         'gray-1000': 'rgb(17,17,19)',
         'gray-1100': 'rgb(10,10,11)',

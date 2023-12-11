@@ -6,28 +6,22 @@ import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import { CirclePicker } from 'react-color';
 import { ExpandMore, ExpandLess } from '@mui/icons-material';
 
-const people = [
-  { id: 1, name: 'Wade Cooper', online: true },
-  { id: 2, name: 'Arlene Mccoy', online: false },
-  { id: 3, name: 'Devon Webb', online: false },
-  { id: 4, name: 'Tom Cook', online: true },
-  { id: 5, name: 'Tanya Fox', online: false },
-  { id: 6, name: 'Hellen Schmidt', online: true },
-  { id: 7, name: 'Caroline Schultz', online: true },
-  { id: 8, name: 'Mason Heaney', online: false },
-  { id: 9, name: 'Claudie Smitham', online: true },
-  { id: 10, name: 'Emil Schaefer', online: false },
-]
+type Credential = {
+  id: string,
+  name: string,
+  imageUrl: string,
+}
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
-function CredentialSelector({credential, setCredential}: {
-  credential: string,
+function CredentialSelector({credential, setCredential, credentials}: {
+  credential: Credential,
   setCredential: React.Dispatch<React.SetStateAction<string>>,
+  credentials: any,
 }) {
-
+  console.log(`CREDENTIALS: ${JSON.stringify(credentials)}`)
   return (
     <Listbox value={credential} onChange={setCredential}>
       {({ open }: { open: boolean }) => (
@@ -48,9 +42,9 @@ function CredentialSelector({credential, setCredential}: {
                 /> */}
                 {/* TODO add credential name */}
                 <div className="flex-shrink-0">
-                  <img className="h-6 w-6 rounded-full" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSevjLMoY69RrmdOeKZONLsRySpvdkEwP-SaraZ3hc_8WFS0eR1ALIIL9xuP2_nWbRnawY&usqp=CAU" alt="" />
+                  <img className="h-6 w-6 rounded-full" src={credential.imageUrl} alt="" />
                 </div>
-                <span className="ml-3 block text-lg py-1.5 text-gray-900 truncate">GitHub</span>
+                <span className="ml-3 block text-lg py-1.5 text-gray-900 truncate">{credential.name}</span>
               </span>
               <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                 { open ? <ExpandLess className="h-5 w-5 text-gray-400" aria-hidden="true" /> : <ExpandMore className="h-5 w-5 text-gray-400" aria-hidden="true" />}
@@ -65,27 +59,27 @@ function CredentialSelector({credential, setCredential}: {
               leaveTo="opacity-0"
             >
               <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                {people.map((person) => (
+                {credentials.map((c) => (
                   <Listbox.Option
-                    key={person.id}
+                    key={c.id}
                     className={({ active }: { active: any}) =>
                       classNames(
                         active ? 'bg-indigo-600 text-white' : 'text-gray-900',
                         'relative cursor-default select-none py-2 pl-3 pr-9'
                       )
                     }
-                    value={person}
+                    value={c}
                   >
                     {({ credential, active }: { credential: any, active: any}) => (
                       <>
                         <div className="flex items-center">
                           <div className="flex-shrink-0">
-                            <img className="h-6 w-6 rounded-full" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSevjLMoY69RrmdOeKZONLsRySpvdkEwP-SaraZ3hc_8WFS0eR1ALIIL9xuP2_nWbRnawY&usqp=CAU" alt="" />
+                            <img className="h-6 w-6 rounded-full" src={c.imageUrl} alt="" />
                           </div>
                           <span
                             className={classNames(credential ? 'font-semibold' : 'font-normal', 'ml-3 block truncate')}
                           >
-                            GitHub
+                            {c.name}
                           </span>
                         </div>
                       </>
@@ -102,10 +96,10 @@ function CredentialSelector({credential, setCredential}: {
 }
 
 
-function CreateInsightForm({open, setOpen}: {open: boolean, setOpen: React.Dispatch<React.SetStateAction<boolean>>}) {
+function CreateInsightForm({open, setOpen, credentials}: {open: boolean, setOpen: React.Dispatch<React.SetStateAction<boolean>>, credentials: any}) {
   const [content, setContent] = useState("");
   const [color, setColor] = useState("#BD4CA5");
-  const [credential, setCredential] = useState("GitHub");
+  const [credential, setCredential] = useState(credentials[0]);
 
   const handleCreateInsight = async (e: any) => {
   }
@@ -194,7 +188,7 @@ function CreateInsightForm({open, setOpen}: {open: boolean, setOpen: React.Dispa
                           </div>
                         </div>
                       </div>
-                      <CredentialSelector credential={credential} setCredential={setCredential}/>
+                      <CredentialSelector credential={credential} setCredential={setCredential} credentials={credentials}/>
                       <div className="mt-4 flex flex-row justify-between">
                         <button
                           type="button"
@@ -253,7 +247,7 @@ function CreateInsightForm({open, setOpen}: {open: boolean, setOpen: React.Dispa
   )
 }
 
-export default function CreateInsight() {
+export default function CreateInsight({credentials}: {credentials: any}) {
   const [open, setOpen] = useState(false);
   //const [post, setPost] = useState(postData);
   //const authorName = post.author ? post.author.name : "Unknown author";
@@ -266,7 +260,7 @@ export default function CreateInsight() {
       </div>
       <div className="absolute bottom-4 flex w-full px-4">
       </div>
-      <CreateInsightForm open={open} setOpen={setOpen} />
+      <CreateInsightForm open={open} setOpen={setOpen} credentials={credentials}/>
       {/* <PostDetail post={post} open={open} setOpen={setOpen} setPost={setPost} /> */}
     </div>
   );

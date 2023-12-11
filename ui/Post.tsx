@@ -2,14 +2,10 @@
 import React from "react";
 import { Fragment, useState, useEffect } from 'react'
 import { Listbox, Dialog, Transition } from '@headlessui/react'
-import Link from 'next/link';
 import { QuestionMark, Check, Clear } from "@mui/icons-material";
-//import { useCredentials } from "lib/stores/credentials.store";
 import { useSSX } from 'ui/_ssx';
-// import { issue } from 'utils/rebase';
 
 const util = require('util');
-
 
 export type PostProps = {
   id: number;
@@ -21,6 +17,7 @@ export type PostProps = {
   content: string;
   published: boolean;
   comments: Comment[];
+  numComments: number;
 };
 
 type Comment = {
@@ -39,7 +36,7 @@ const opinions = [
   // More items...
 ]
 
-function classNames(...classes) {
+function classNames(...classes: any[]) {
   return classes.filter(Boolean).join(' ')
 }
 
@@ -346,17 +343,35 @@ export default function Post({ postData }: { postData: PostProps }) {
   const [post, setPost] = useState(postData);
   const authorName = post.author ? post.author.name : "Unknown author";
 
+  const credential = {
+    name: 'GitHub',
+    imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSevjLMoY69RrmdOeKZONLsRySpvdkEwP-SaraZ3hc_8WFS0eR1ALIIL9xuP2_nWbRnawY&usqp=CAU'
+  }
+
   return (
-    <div onClick={(e) => {e.preventDefault(); setOpen(true)}} className="w-100 cursor-pointer rounded-lg border border-stone-200 pb-10 shadow-md transition-all hover:shadow-xl dark:border-stone-700 dark:hover:border-white">
+    <div onClick={(e) => {e.preventDefault(); setOpen(true)}} className="w-100 cursor-pointer rounded-lg border border-stone-200 shadow-md transition-all hover:shadow-xl dark:border-stone-700 dark:hover:border-white">
       <div className="flex flex-col overflow-hidden rounded-lg">
         <div className="relative h-44 overflow-hidden bg-turquoise"/>
         <div className="border-t border-stone-200 p-4 dark:border-stone-700">
           <h3 className="my-0 truncate font-cal text-xl font-bold tracking-wide text-black">
             {post.title}
           </h3>
-          <p className="mt-2 line-clamp-1 text-sm font-normal leading-snug text-stone-500 dark:text-stone-400">
+          <p className="mt-2 line-clamp-2 text-sm font-normal leading-snug text-stone-500 dark:text-stone-400">
             {post.content}
           </p>
+          <div className="flex flex-row justify-between">
+            <span className="flex mt-2 items-center justify-center text-black text-sm text-bold">{post.numComments} Responses</span>
+            <div className="flex flex-row">
+              <span className="flex mt-2 mr-2 items-center justify-center text-black text-sm text-bold">Requires </span>
+              <div className="flex flex-row bg-gray-300 rounded-full px-2 mt-2" style={{width: 'fit-content'}}>
+                <div className="flex items-center">
+                  <img className="h-5 w-5 rounded-full" src={credential.imageUrl} alt="" />
+                </div>
+                <span className="mx-3 block text-sm py-1.5 text-gray-900 truncate">{credential.name}</span>
+              </div>
+            </div>
+            
+          </div>
         </div>
       </div>
       <div className="absolute bottom-4 flex w-full px-4">

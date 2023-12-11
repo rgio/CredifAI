@@ -1,5 +1,4 @@
 'use client';
-
 import Credential from '#/ui/credential';
 import { useSSX } from 'ui/_ssx';
 

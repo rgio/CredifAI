@@ -1,4 +1,4 @@
-import Post from '#/ui/Post';
+import Post from '#/ui/post';
 import prisma from '#/lib/prisma';
 import CreateInsight from '#/ui/create-insight';
 
@@ -25,6 +25,8 @@ export default async function Page({ params }: { params: { id: string } }) {
     },
   });
 
+  const credentials = await prisma.credential.findMany();
+
   return (
     <>
       <div className="page">
@@ -34,7 +36,7 @@ export default async function Page({ params }: { params: { id: string } }) {
             {feed.map((post: any) => (
               <Post key={post.id} postData={post} />
             ))}
-            <CreateInsight/>
+            <CreateInsight credentials={credentials}/>
           </div>
         </main>
       </div>

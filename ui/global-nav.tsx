@@ -1,13 +1,11 @@
 'use client';
 
 import { demos, type Item } from '#/lib/demos';
-import { NextLogo } from '#/ui/next-logo';
 import Link from 'next/link';
 import { useSelectedLayoutSegment } from 'next/navigation';
 import { MenuAlt2Icon, XIcon } from '@heroicons/react/solid';
 import clsx from 'clsx';
 import { useState } from 'react';
-import Byline from './byline';
 
 export function GlobalNav() {
   const [isOpen, setIsOpen] = useState(false);
@@ -53,7 +51,6 @@ export function GlobalNav() {
             );
           })}
         </nav>
-        {/* <Byline className="absolute hidden sm:block" /> */}
       </div>
     </div>
   );

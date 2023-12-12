@@ -10,6 +10,7 @@ const util = require('util');
 export type PostProps = {
   id: number;
   title: string;
+  color: string;
   author: {
     name: string;
     email: string;
@@ -300,7 +301,7 @@ function PostDetail({ post, open, setOpen, setPost }: {
             >
               <Dialog.Panel className="relative w-2/3 h-[80vh] transform overflow-scroll rounded-lg bg-white text-left shadow-xl transition-all">
                 <div>
-                  <div className="relative h-44 overflow-hidden bg-turquoise"/>
+                  <div className="relative h-44 overflow-hidden" style={{backgroundColor: post.color}}/>
                   <div className="mt-3 mb-3 text-center sm:mt-5 px-12 pt-5 pb-4">
                     <Dialog.Title as="h1" className="font-cal text-4xl font-bold tracking-wide text-black">
                       {post.title}
@@ -351,7 +352,7 @@ export default function Post({ postData }: { postData: PostProps }) {
   return (
     <div onClick={(e) => {e.preventDefault(); setOpen(true)}} className="w-100 cursor-pointer rounded-lg border border-stone-200 shadow-md transition-all hover:shadow-xl dark:border-stone-700 dark:hover:border-white">
       <div className="flex flex-col overflow-hidden rounded-lg">
-        <div className="relative h-44 overflow-hidden bg-turquoise"/>
+        <div className="relative h-44 overflow-hidden" style={{backgroundColor: post.color}}/>
         <div className="border-t border-stone-200 p-4 dark:border-stone-700">
           <h3 className="my-0 truncate font-cal text-xl font-bold tracking-wide text-black">
             {post.title}

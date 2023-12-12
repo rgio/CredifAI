@@ -1,5 +1,5 @@
 'use client';
-
+const util = require('util');
 import { Fragment, useState } from 'react'
 import { Dialog, Transition, Listbox } from '@headlessui/react'
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
@@ -12,7 +12,7 @@ type Credential = {
   imageUrl: string,
 }
 
-function classNames(...classes) {
+function classNames(...classes: any[]) {
   return classes.filter(Boolean).join(' ')
 }
 
@@ -21,7 +21,6 @@ function CredentialSelector({credential, setCredential, credentials}: {
   setCredential: React.Dispatch<React.SetStateAction<string>>,
   credentials: any,
 }) {
-  console.log(`CREDENTIALS: ${JSON.stringify(credentials)}`)
   return (
     <Listbox value={credential} onChange={setCredential}>
       {({ open }: { open: boolean }) => (
@@ -96,16 +95,48 @@ function CredentialSelector({credential, setCredential, credentials}: {
 }
 
 
-function CreateInsightForm({open, setOpen, credentials}: {open: boolean, setOpen: React.Dispatch<React.SetStateAction<boolean>>, credentials: any}) {
-  const [content, setContent] = useState("");
+function CreateInsightForm({open, setOpen, credentials, posts, setPosts}: {open: boolean, setOpen: React.Dispatch<React.SetStateAction<boolean>>, credentials: any, posts: any, setPosts: any}) {
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
   const [color, setColor] = useState("#BD4CA5");
   const [credential, setCredential] = useState(credentials[0]);
 
   const handleCreateInsight = async (e: any) => {
+    console.log(`HANDLE CREATE INSIGHT`)
+    e.preventDefault();
+
+    const body = {
+      title: e.target.title.value,
+      description: e.target.description.value,
+      credentialId: credential.id,
+      color: color,
+    }
+
+    const response = await fetch(
+      `/api/insights/create`,
+      {
+        method: 'POST',
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      },
+    );
+
+    const responseJson = await response.json();
+    const postData = responseJson.data;
+    postData.comments = [];
+    // console.log(`POSTS: ${util.inspect(posts)}`);
+    setPosts([...posts, postData]);
+
+    console.log(`CREATE RESPONSE: ${util.inspect(postData)}`);
+    setTitle("");
+    setDescription("");
+    setColor("#BD4CA5");
+    setCredential(credentials[0]);
+    setOpen(false);
   }
 
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setContent(e.target.value);
+    setDescription(e.target.value);
   }
 
   const handleColorChange = (color: any, event: any) => {
@@ -158,6 +189,8 @@ function CreateInsightForm({open, setOpen, credentials}: {open: boolean, setOpen
                           id="title"
                           className="block w-full text-lg placeholder:text-lg rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:leading-6"
                           placeholder="Title"
+                          value={title}
+                          onChange={(e) => setTitle(e.target.value)}
                         />
                       </div>
                       
@@ -171,7 +204,7 @@ function CreateInsightForm({open, setOpen, credentials}: {open: boolean, setOpen
                           id="description"
                           className="block w-full resize-none border-0 pt-2.5 text-lg text-gray-900 placeholder:text-lg placeholder:text-gray-400 focus:ring-0"
                           placeholder="Add a description"
-                          value={content}
+                          value={description}
                           onChange={handleTextChange}
                         />
 
@@ -198,46 +231,15 @@ function CreateInsightForm({open, setOpen, credentials}: {open: boolean, setOpen
                           Cancel
                         </button>
                         <button
-                          type="button"
+                          type="submit"
                           className="flex-end ml-6 inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-base font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                          // onClick={openConnectModal}
-                          // disabled={showSpinner}
                         >
                           Submit
                         </button>
                       </div>
                     </form>
-                    
-
-
-
-                    {/* <Dialog.Title as="h1" className="font-cal text-4xl font-bold tracking-wide text-black">
-                      Title
-                    </Dialog.Title>
-                    <div className="mt-6">
-                      <p className="text-lg text-left text-stone-500">
-                        content
-                      </p>
-                    </div> */}
-                    {/* <div className="mt-6">
-                      <CommentInput post={post} setPost={setPost}/>
-                    </div>
-                    <div className="mt-6">
-                      {post.comments.map((comment: any) => (
-                        <Comment key={comment.id} comment={comment} />
-                      ))}
-                    </div> */}
                   </div>
                 </div>
-                {/* <div className="mt-5 sm:mt-6">
-                  <button
-                    type="button"
-                    className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                    onClick={() => setOpen(false)}
-                  >
-                    Go back to dashboard
-                  </button>
-                </div> */}
               </Dialog.Panel>
             </Transition.Child>
           </div>
@@ -247,20 +249,20 @@ function CreateInsightForm({open, setOpen, credentials}: {open: boolean, setOpen
   )
 }
 
-export default function CreateInsight({credentials}: {credentials: any}) {
+export default function CreateInsight({credentials, posts, setPosts}: {credentials: any, posts: any, setPosts: any}) {
   const [open, setOpen] = useState(false);
   //const [post, setPost] = useState(postData);
   //const authorName = post.author ? post.author.name : "Unknown author";
 
   return (
-    <div onClick={(e) => {e.preventDefault(); setOpen(true)}} className="relative block w-100 rounded-lg border-2 border-dashed border-gray-300 p-12 text-center hover:border-gray-400">
+    <div onClick={(e) => {e.preventDefault(); setOpen(true)}} className="relative block w-100 h-[304.25px] rounded-lg border-2 border-dashed border-gray-300 p-12 text-center hover:border-gray-400">
       <div className="justify-center items-center h-full flex flex-col overflow-hidden rounded-lg">
         <AutoAwesomeIcon className="mx-auto h-24 w-24 text-gray-400"/>
         <span className="mt-2 block text-lg font-semibold text-gray-900">Add an insight</span>
       </div>
       <div className="absolute bottom-4 flex w-full px-4">
       </div>
-      <CreateInsightForm open={open} setOpen={setOpen} credentials={credentials}/>
+      <CreateInsightForm open={open} setOpen={setOpen} credentials={credentials} posts={posts} setPosts={setPosts}/>
       {/* <PostDetail post={post} open={open} setOpen={setOpen} setPost={setPost} /> */}
     </div>
   );

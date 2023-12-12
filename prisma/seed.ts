@@ -10,6 +10,7 @@ const userData: Prisma.UserCreateInput[] = [
       create: [
         {
           title: 'Adoption of Decentralized Technologies',
+          color: '#29E7CD',
           content: 'A significant majority of Web3 developers (78%) report a growing interest in decentralized technologies, with a particular focus on blockchain and decentralized finance (DeFi) applications. This trend is driven by a desire for more secure, transparent, and efficient systems, as well as the burgeoning market opportunities in these areas.',
           published: true,
         },
@@ -23,6 +24,7 @@ const userData: Prisma.UserCreateInput[] = [
       create: [
         {
           title: 'Challenges in Scalability and Performance',
+          color: '#BD4CA5',
           content: 'Scalability and performance issues are the top challenges faced by 65% of Web3 developers. These challenges stem from the limitations of current blockchain infrastructures and the complexity of developing scalable decentralized applications (dApps) that can handle high transaction volumes without compromising on speed or security.',
           published: true,
         },
@@ -36,6 +38,7 @@ const userData: Prisma.UserCreateInput[] = [
       create: [
         {
           title: 'Shift Towards Interoperability',
+          color: '#3993DD',
           content: 'About 59% of developers emphasize the importance of interoperability between different blockchain platforms. There is a growing recognition that enabling communication and data exchange across various blockchain networks is crucial for the broader adoption and functionality of Web3 applications.',
           published: true,
         },
@@ -49,12 +52,9 @@ const userData: Prisma.UserCreateInput[] = [
       create: [
         {
           title: 'Demand for Enhanced Security Measures',
+          color: '#F7AA2F',
           content: 'With increasing incidents of security breaches and smart contract vulnerabilities, 72% of Web3 developers prioritize enhancing security measures in their projects. Developers are adopting more rigorous testing methods, code audits, and innovative security protocols to safeguard against potential threats.',
           published: true,
-        },
-        {
-          title: 'Prisma on YouTube',
-          content: 'https://pris.ly/youtube',
         },
       ],
     },
@@ -66,12 +66,9 @@ const userData: Prisma.UserCreateInput[] = [
       create: [
         {
           title: 'Trends in Decentralized Identity (DID)',
+          color: '#a30b1b',
           content: 'Decentralized identity solutions are gaining traction, with 54% of developers actively exploring or implementing DID systems. These systems are seen as a key enabler for privacy-preserving and user-centric identity management in the Web3 space, offering users control over their digital identities.ity breaches and smart contract vulnerabilities, 72% of Web3 developers prioritize enhancing security measures in their projects. Developers are adopting more rigorous testing methods, code audits, and innovative security protocols to safeguard against potential threats.',
           published: true,
-        },
-        {
-          title: 'Prisma on YouTube',
-          content: 'https://pris.ly/youtube',
         },
       ],
     },

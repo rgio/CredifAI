@@ -8,15 +8,20 @@ datasource db {
 }
 
 model Post {
-  id        String  @id @default(cuid())
-  title     String
-  content   String?
-  published Boolean @default(false)
-  author    User?   @relation(fields: [authorId], references: [id])
-  authorId  String?
-  comments  Comment[]
-  numComments Int @default(0) @map(name: "num_comments")
-  createdAt DateTime  @default(now()) @map(name: "created_at")
+  id           String  @id @default(cuid())
+  title        String
+  color        String?
+  content      String?
+  published    Boolean @default(false)
+  author       User?   @relation(fields: [authorId], references: [id])
+  authorId     String?
+  comments     Comment[]
+  credential   Credential? @relation(fields: [credentialId], references: [id])
+  credentialId String?
+  document     Document? @relation(fields: [documentId], references: [id])
+  documentId   String?
+  numComments  Int @default(0) @map(name: "num_comments")
+  createdAt    DateTime  @default(now()) @map(name: "created_at")
 
   @@map(name: "posts")
 }
@@ -39,6 +44,7 @@ model Credential {
   name      String
   imageUrl  String
   createdAt DateTime @default(now()) @map(name: "created_at")
+  posts     Post[]
 
   @@map(name: "credentials")
 }
@@ -48,6 +54,7 @@ model Document {
   url       String
   filename  String
   createdAt DateTime  @default(now()) @map(name: "created_at")
+  posts     Post[]
 
   @@map(name: "documents")
 }

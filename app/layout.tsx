@@ -1,30 +1,19 @@
+//TODO: remove use client
 'use client';
 import '#/styles/globals.css';
-import { AddressBar } from '#/ui/address-bar';
-import Byline from '#/ui/byline';
-import { GlobalNav } from '#/ui/global-nav';
-import { Metadata } from 'next';
-import { Navbar } from '#/ui/navbar';
 import App from './app';
-import { MetaMaskProvider } from '@metamask/sdk-react';
+import { createConfig, mainnet } from 'wagmi'
+import { createPublicClient, http } from 'viem'
+import { SSXProvider } from '#/ui/_ssx';
 
-// export const metadata: Metadata = {
-//   title: {
-//     default: 'Next.js App Router',
-//     template: '%s | Next.js App Router',
-//   },
-//   description:
-//     'A playground to explore new Next.js App Router features such as nested layouts, instant loading states, streaming, and component level data fetching.',
-//   openGraph: {
-//     title: 'Next.js App Router Playground',
-//     description:
-//       'A playground to explore new Next.js App Router features such as nested layouts, instant loading states, streaming, and component level data fetching.',
-//     images: [`/api/og?title=Next.js App Router`],
-//   },
-//   twitter: {
-//     card: 'summary_large_image',
-//   },
-// };
+
+const config = createConfig({
+  autoConnect: true,
+  publicClient: createPublicClient({
+    chain: mainnet,
+    transport: http(),
+  }),
+})
 
 export default function RootLayout({
   children,
@@ -35,17 +24,11 @@ export default function RootLayout({
   return (
     <html lang="en" className="[color-scheme:dark]">
       <body className="bg-gray-100 overflow-y-scroll pb-36">
-        <MetaMaskProvider debug={false} sdkOptions={{
-          checkInstallationImmediately: false,
-          dappMetadata: {
-            name: "Sapien Truedot Demo",
-            url: window.location.host,
-          }
-        }}>
+        <SSXProvider>
           <App>
             {children}
           </App>
-        </MetaMaskProvider>
+        </SSXProvider>
       </body>
     </html>
   );

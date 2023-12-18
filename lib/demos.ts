@@ -9,19 +9,19 @@ export const demos: { name: string; items: Item[] }[] = [
     name: 'Data',
     items: [
       {
-        name: 'Surveys',
-        slug: 'data',
-        description: 'A collection of surveys',
+        name: 'Documents',
+        slug: 'documents',
+        description: 'A collection of documents',
       },
       {
         name: 'Insights',
         slug: 'insights',
-        description: 'Insights about survey results',
+        description: 'Insights about your data',
       },
       {
         name: 'Credentials',
         slug: 'credentials',
-        description: 'Credentials used to validate users',
+        description: 'Credentials used to validate user insights',
       },
     ]
   },

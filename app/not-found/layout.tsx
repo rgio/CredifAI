@@ -1,5 +1,5 @@
 import { getCategories } from '#/app/api/categories/getCategories';
-import { ClickCounter } from '#/ui/click-counter';
+// import { ClickCounter } from '#/ui/click-counter';
 import { TabGroup } from '#/ui/tab-group';
 import React from 'react';
 
@@ -40,9 +40,9 @@ export default async function Layout({
           ]}
         />
 
-        <div className="self-start">
+        {/* <div className="self-start">
           <ClickCounter />
-        </div>
+        </div> */}
       </div>
 
       <div>{children}</div>

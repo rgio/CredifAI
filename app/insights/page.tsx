@@ -27,21 +27,17 @@ export default async function Page({ params }: { params: { id: string } }) {
   });
 
   const credentials = await prisma.credential.findMany();
+  const documents = await prisma.document.findMany();
 
   return (
-    <>
-      <div className="page">
-        {/* <h1>Public Feed</h1> */}
+    <div className="page">
+      <div className="mx-auto h-full max-w-4xl space-y-8 p-px px-2 pt-20 lg:px-12 lg:py-16">
         <main>
-          {/* <div className="mx-auto mt-16 grid grid-cols-2 gap-10">
-            {feed.map((post: any) => (
-              <Post key={post.id} postData={post} />
-            ))}
-            <CreateInsight credentials={credentials}/>
-          </div> */}
-          <PostFeed postsData={feed} credentialsData={credentials}/>
+          <div className="pb-24">
+            <PostFeed postsData={feed} credentialsData={credentials} documentsData={documents}/>
+          </div>
         </main>
       </div>
-    </>
+    </div>
   );
 }

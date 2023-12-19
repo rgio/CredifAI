@@ -65,7 +65,7 @@ export function TopBar() {
           <div className="relative flex grow justify-between lg:gap-8 lg:grid lg:grid-cols-8">
             <div className="lg:col-span-1"/>
             <div className="min-w-0 flex-1 md:px-8 lg:px-0 lg:col-span-6">
-              <div className="flex items-center px-6 py-4 md:mx-auto md:max-w-3xl lg:mx-0 lg:max-w-none xl:px-0">
+              {/* <div className="flex items-center px-6 py-4 md:mx-auto md:max-w-3xl lg:mx-0 lg:max-w-none xl:px-0">
                 <div className="w-full">
                   <label htmlFor="search" className="sr-only">
                     Search
@@ -83,7 +83,7 @@ export function TopBar() {
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
             <div className="flex items-center md:absolute md:inset-y-0 md:right-0 lg:hidden">
             </div>

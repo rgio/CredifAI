@@ -1,74 +1,174 @@
 'use client';
 
+import { DEFAULT_SYSTEM_PROMPT, DEFAULT_TEMPERATURE } from 'lib/utils/const';
 import { demos, type Item } from '#/lib/demos';
 import Link from 'next/link';
+import { IconPlus } from '@tabler/icons-react';
 import { useSelectedLayoutSegment } from 'next/navigation';
 import { MenuAlt2Icon, XIcon } from '@heroicons/react/solid';
 import clsx from 'clsx';
-import { useState } from 'react';
+import { Conversation } from 'types/chat';
+import { OpenAIModels } from 'types/openai';
+import { useState, useContext } from 'react';
+import { useTranslation } from 'next-i18next';
+import { saveConversation, saveConversations } from 'lib/utils/conversation';
+import { useCreateReducer } from 'hooks/useCreateReducer';
+import { ConversationComponent } from 'ui/conversation';
+import ChatbarContext from 'lib/contexts/chatbar.context';
+import HomeContext from 'lib/contexts/home.context';
+import { ChatbarInitialState, initialState } from 'lib/contexts/chatbar.state';
+
+// import { v4 as uuidv4 } from 'uuid';
+const uuidv4 = require('uuid').v4;
 
 export function GlobalNav() {
   const [isOpen, setIsOpen] = useState(false);
   const close = () => setIsOpen(false);
 
+  const { t } = useTranslation('sidebar');
+
+  const chatBarContextValue = useCreateReducer<ChatbarInitialState>({
+    initialState,
+  });
+
+  const {
+    state: { conversations, showChatbar, defaultModelId, folders, pluginKeys },
+    dispatch: homeDispatch,
+    handleNewConversation,
+    handleSelectConversation,
+  } = useContext(HomeContext);
+
+  const {
+    state: { searchTerm, filteredConversations },
+    dispatch: chatDispatch,
+  } = chatBarContextValue;
+
+  const handleDeleteConversation = (conversation: Conversation) => {
+    const updatedConversations = conversations.filter(
+      (c) => c.id !== conversation.id,
+    );
+
+    homeDispatch({ field: 'conversations', value: updatedConversations });
+    chatDispatch({ field: 'searchTerm', value: '' });
+    saveConversations(updatedConversations);
+
+    if (updatedConversations.length > 0) {
+      homeDispatch({
+        field: 'selectedConversation',
+        value: updatedConversations[updatedConversations.length - 1],
+      });
+
+      saveConversation(updatedConversations[updatedConversations.length - 1]);
+    } else {
+      defaultModelId &&
+        homeDispatch({
+          field: 'selectedConversation',
+          value: {
+            id: uuidv4(),
+            name: t('New Conversation'),
+            messages: [],
+            model: OpenAIModels[defaultModelId],
+            prompt: DEFAULT_SYSTEM_PROMPT,
+            temperature: DEFAULT_TEMPERATURE,
+            folderId: null,
+          },
+        });
+
+      localStorage.removeItem('selectedConversation');
+    }
+  };
+
   return (
-    <div className="fixed top-0 flex w-full flex-col border-b border-gray-300 bg-gray-100 lg:bottom-0 lg:z-auto lg:w-72 lg:border-b-0 lg:border-r lg:border-gray-300">
-      <button
-        type="button"
-        className="group absolute right-0 top-0 flex h-14 items-center gap-x-2 px-4 lg:hidden"
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        <div className="font-medium text-gray-100 group-hover:text-gray-400">
-          Menu
-        </div>
-        {isOpen ? (
-          <XIcon className="block w-6 text-gray-400" />
-        ) : (
-          <MenuAlt2Icon className="block w-6 text-gray-400" />
-        )}
-      </button>
+    <ChatbarContext.Provider
+      value={{
+        ...chatBarContextValue,
+        handleDeleteConversation,
+        handleClearConversations: () => null,
+        handleImportConversations: () => null,
+        handleExportData: () => null,
+        handlePluginKeyChange: () => null,
+        handleClearPluginKey: () => null,
+        handleApiKeyChange: () => null,
+      }}
+    >
+      <div className="fixed top-0 flex w-full flex-col border-b border-gray-300 bg-gray-100 lg:bottom-0 lg:z-auto lg:w-72 lg:border-b-0 lg:border-r lg:border-gray-300">
+        <button
+          type="button"
+          className="group absolute right-0 top-0 flex h-14 items-center gap-x-2 px-4 lg:hidden"
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          <div className="font-medium text-gray-100 group-hover:text-gray-400">
+            Menu
+          </div>
+          {isOpen ? (
+            <XIcon className="block w-6 text-gray-400" />
+          ) : (
+            <MenuAlt2Icon className="block w-6 text-gray-400" />
+          )}
+        </button>
 
-      <div
-        className={clsx('overflow-y-auto lg:static lg:block', {
-          'fixed inset-x-0 bottom-0 top-14 mt-px bg-black': isOpen,
-          hidden: !isOpen,
-        })}
-      >
-        <nav className="space-y-6 px-2 pb-24 pt-24">
-          {demos.map((section) => {
-            return (
-              <div key={section.name}>
-                <div className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-gray-400/80">
-                  <div>{section.name}</div>
-                </div>
-
-                <div className="space-y-1">
-                  {section.items.map((item) => (
-                    <GlobalNavItem key={item.slug} item={item} close={close} />
-                  ))}
-                </div>
-              </div>
-            );
+        <div
+          className={clsx('overflow-y-auto lg:static lg:block', {
+            'fixed inset-x-0 bottom-0 top-14 mt-px bg-black': isOpen,
+            hidden: !isOpen,
           })}
-        </nav>
+        >
+          <nav className="space-y-6 px-2 pb-24 pt-24">
+            <button
+              className="text-sidebar flex w-full bg-[#343541]/90 flex-shrink-0 cursor-pointer select-none items-center gap-3 rounded-md border border-white/20 p-3 text-white transition-colors duration-200 hover:bg-[#343541]/80"
+              onClick={() => {
+                handleNewConversation();
+              }}
+            >
+              <IconPlus size={16} />
+              Ask a question
+            </button>
+            <div className="flex w-full flex-col gap-1">
+              {conversations
+                .filter((conversation) => !conversation.folderId)
+                .slice()
+                .reverse()
+                .map((conversation, index) => (
+                  <ConversationComponent key={index} conversation={conversation} />
+                ))}
+            </div>
+            {demos.map((section) => {
+              return (
+                <div key={section.name}>
+                  <div className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-gray-400/80">
+                    <div>{section.name}</div>
+                  </div>
+
+                  <div className="space-y-1">
+                    {section.items.map((item) => (
+                      <GlobalNavItem key={item.slug} item={item} close={close} handleSelectConversation={handleSelectConversation} />
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </nav>
+        </div>
       </div>
-    </div>
+    </ChatbarContext.Provider>
   );
 }
 
 function GlobalNavItem({
   item,
   close,
+  handleSelectConversation,
 }: {
   item: Item;
   close: () => false | void;
+  handleSelectConversation: any;
 }) {
   const segment = useSelectedLayoutSegment();
   const isActive = item.slug === segment;
 
   return (
     <Link
-      onClick={close}
+      onClick={() => handleSelectConversation()}
       href={`/${item.slug}`}
       className={clsx(
         'flex flex-row rounded-md px-3 py-2 text-sm font-medium hover:text-indigo-600',

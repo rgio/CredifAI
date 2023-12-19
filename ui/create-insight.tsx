@@ -1,10 +1,12 @@
 'use client';
 const util = require('util');
-import { Fragment, useState } from 'react'
+import { Fragment, useState, useEffect } from 'react'
 import { Dialog, Transition, Listbox } from '@headlessui/react'
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import { CirclePicker } from 'react-color';
+//import CirclePicker from "react-color"
 import { ExpandMore, ExpandLess } from '@mui/icons-material';
+import { useSSX } from 'ui/_ssx';
 
 type Credential = {
   id: string,
@@ -18,7 +20,7 @@ function classNames(...classes: any[]) {
 
 function CredentialSelector({credential, setCredential, credentials}: {
   credential: Credential,
-  setCredential: React.Dispatch<React.SetStateAction<string>>,
+  setCredential: any,
   credentials: any,
 }) {
   return (
@@ -26,9 +28,9 @@ function CredentialSelector({credential, setCredential, credentials}: {
       {({ open }: { open: boolean }) => (
         <>
           <Listbox.Label className="block mt-2 text-left text-bold text-base font-medium leading-6 text-gray-900">Credential</Listbox.Label>
-          <p className="text-left text-sm text-gray-500" id="email-description">
+          {/* <p className="text-left text-sm text-gray-500" id="email-description">
             Who can respond to this insight?
-          </p>
+          </p> */}
           <div className="relative mt-2">
             <Listbox.Button className="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
               <span className="flex items-center">
@@ -58,7 +60,7 @@ function CredentialSelector({credential, setCredential, credentials}: {
               leaveTo="opacity-0"
             >
               <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                {credentials.map((c) => (
+                {credentials.map((c: any) => (
                   <Listbox.Option
                     key={c.id}
                     className={({ active }: { active: any}) =>
@@ -69,7 +71,7 @@ function CredentialSelector({credential, setCredential, credentials}: {
                     }
                     value={c}
                   >
-                    {({ credential, active }: { credential: any, active: any}) => (
+                    {({ credential, active }: { credential?: any, active: any}) => (
                       <>
                         <div className="flex items-center">
                           <div className="flex-shrink-0">
@@ -94,45 +96,197 @@ function CredentialSelector({credential, setCredential, credentials}: {
   )
 }
 
+function DocumentSelector({document, setDocument, documents}: {
+  document: any,
+  setDocument: any,
+  documents: any,
+}) {
+  return (
+    <Listbox value={document} onChange={setDocument}>
+      {({ open }: { open: boolean }) => (
+        <>
+          <Listbox.Label className="block mt-2 text-left text-bold text-base font-medium leading-6 text-gray-900">Document</Listbox.Label>
+          <div className="relative mt-2">
+            <Listbox.Button className="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
+              <span className="flex items-center">
+                <span className="ml-3 block text-lg py-1.5 text-gray-900 truncate">{document.filename}</span>
+              </span>
+              <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                { open ? <ExpandLess className="h-5 w-5 text-gray-400" aria-hidden="true" /> : <ExpandMore className="h-5 w-5 text-gray-400" aria-hidden="true" />}
+              </span>
+            </Listbox.Button>
 
-function CreateInsightForm({open, setOpen, credentials, posts, setPosts}: {open: boolean, setOpen: React.Dispatch<React.SetStateAction<boolean>>, credentials: any, posts: any, setPosts: any}) {
+            <Transition
+              show={open}
+              as={Fragment}
+              leave="transition ease-in duration-100"
+              leaveFrom="opacity-100"
+              leaveTo="opacity-0"
+            >
+              <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                {documents.map((d: any) => (
+                  <Listbox.Option
+                    key={d.id}
+                    className={({ active }: { active: any}) =>
+                      classNames(
+                        active ? 'bg-indigo-600 text-white' : 'text-gray-900',
+                        'relative cursor-default select-none py-2 pl-3 pr-9'
+                      )
+                    }
+                    value={d}
+                  >
+                    {({ document, active }: { document?: any, active: any}) => (
+                      <>
+                        <div className="flex items-center">
+                          <span
+                            className={classNames(document ? 'font-semibold' : 'font-normal', 'ml-3 block truncate')}
+                          >
+                            {d.filename}
+                          </span>
+                        </div>
+                      </>
+                    )}
+                  </Listbox.Option>
+                ))}
+              </Listbox.Options>
+            </Transition>
+          </div>
+        </>
+      )}
+    </Listbox>
+  )
+}
+
+
+function CreateInsightForm({open, setOpen, credentials, documents, posts, setPosts}: {open: boolean, setOpen: React.Dispatch<React.SetStateAction<boolean>>, credentials: any, documents: any, posts: any, setPosts: any}) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [color, setColor] = useState("#BD4CA5");
   const [credential, setCredential] = useState(credentials[0]);
+  const [document, setDocument] = useState(documents[0]);
+  const [issueAttestation, setIssueAttestation] = useState<any>();
+
+  const { ssx } = useSSX();
+
+  const importIssue = async () => {
+    const rebase = await import('lib/utils/rebase');
+    setIssueAttestation(rebase);
+  }
+
+  useEffect(() => {
+    importIssue();
+  }, []);
+
+  const insightToAttestationText = (insight: any) => {
+    const { description, credential } = insight;
+    const data = {
+      content: description,
+      credential: credential.name,
+    };
+    return JSON.stringify(data);
+  };
+
+  const handleGenerateAttestation = (insight: any): Promise<any> => {
+    return new Promise(async (resolve, reject) => {
+      if (!ssx) {
+        reject('SSX is not defined');
+        return;
+      }
+
+      try {
+        const address = ssx.userAuthorization.address();
+        const sign = (x: any) => ssx.userAuthorization.signMessage(x);
+
+        const body = insightToAttestationText(insight);
+        const content = { body, title: insight.title };
+        let jwt = await issueAttestation.issue(content, address || '', sign);
+        resolve(jwt);
+      } catch (error) {
+        reject(error);
+      }
+    });
+};
 
   const handleCreateInsight = async (e: any) => {
     console.log(`HANDLE CREATE INSIGHT`)
     e.preventDefault();
 
-    const body = {
-      title: e.target.title.value,
-      description: e.target.description.value,
-      credentialId: credential.id,
-      color: color,
+    const handleData = () => {
+      (async () => {
+        const body = {
+          path: document.filename,
+          title: e.target.title.value,
+          description: e.target.description.value,
+          credentialId: credential.id,
+          color: color,
+        }
+    
+        try {
+          const response = await fetch(
+            `/api/insights/create`,
+            {
+              method: 'POST',
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(body),
+            },
+          );
+    
+          const responseJson = await response.json();
+          const postData = responseJson.data;
+          postData.comments = [];
+          // console.log(`POSTS: ${util.inspect(posts)}`);
+          setPosts([...posts, postData]);
+      
+          console.log(`CREATE RESPONSE: ${util.inspect(postData)}`);
+          setTitle("");
+          setDescription("");
+          setColor("#BD4CA5");
+          setCredential(credentials[0]);
+          setOpen(false);
+        } catch (error) {
+          console.error('Error:', error);
+        }
+      })();
     }
 
-    const response = await fetch(
-      `/api/insights/create`,
-      {
-        method: 'POST',
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      },
-    );
+    handleGenerateAttestation({ title, description, credential }).then((jwt) => { 
+      console.log(`JWT: ${jwt}`) 
+      handleData();
+    });
 
-    const responseJson = await response.json();
-    const postData = responseJson.data;
-    postData.comments = [];
-    // console.log(`POSTS: ${util.inspect(posts)}`);
-    setPosts([...posts, postData]);
-
-    console.log(`CREATE RESPONSE: ${util.inspect(postData)}`);
-    setTitle("");
-    setDescription("");
-    setColor("#BD4CA5");
-    setCredential(credentials[0]);
-    setOpen(false);
+    // handleGenerateAttestation({ title, description, credential }).then((jwt) => { 
+    //   console.log(`JWT: ${jwt}`) 
+    //   const body = {
+    //     path: document.filename,
+    //     title: e.target.title.value,
+    //     description: e.target.description.value,
+    //     credentialId: credential.id,
+    //     color: color,
+    //   }
+  
+    //   const response = await fetch(
+    //     `/api/insights/create`,
+    //     {
+    //       method: 'POST',
+    //       headers: { "Content-Type": "application/json" },
+    //       body: JSON.stringify(body),
+    //     },
+    //   );
+  
+    //   const responseJson = await response.json();
+    //   const postData = responseJson.data;
+    //   postData.comments = [];
+    //   // console.log(`POSTS: ${util.inspect(posts)}`);
+    //   setPosts([...posts, postData]);
+  
+    //   console.log(`CREATE RESPONSE: ${util.inspect(postData)}`);
+    //   setTitle("");
+    //   setDescription("");
+    //   setColor("#BD4CA5");
+    //   setCredential(credentials[0]);
+    //   setOpen(false);
+    
+    // });
   }
 
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -221,6 +375,7 @@ function CreateInsightForm({open, setOpen, credentials, posts, setPosts}: {open:
                           </div>
                         </div>
                       </div>
+                      <DocumentSelector document={document} setDocument={setDocument} documents={documents}/>
                       <CredentialSelector credential={credential} setCredential={setCredential} credentials={credentials}/>
                       <div className="mt-4 flex flex-row justify-between">
                         <button
@@ -249,20 +404,20 @@ function CreateInsightForm({open, setOpen, credentials, posts, setPosts}: {open:
   )
 }
 
-export default function CreateInsight({credentials, posts, setPosts}: {credentials: any, posts: any, setPosts: any}) {
+export default function CreateInsight({credentials, documents, posts, setPosts}: {credentials: any, documents: any, posts: any, setPosts: any}) {
   const [open, setOpen] = useState(false);
   //const [post, setPost] = useState(postData);
   //const authorName = post.author ? post.author.name : "Unknown author";
 
   return (
-    <div onClick={(e) => {e.preventDefault(); setOpen(true)}} className="relative block w-100 h-[304.25px] rounded-lg border-2 border-dashed border-gray-300 p-12 text-center hover:border-gray-400">
+    <div onClick={(e) => {e.preventDefault(); setOpen(true)}} className="relative block w-100 h-[323.5px] rounded-lg border-2 border-dashed border-gray-300 p-12 text-center hover:border-gray-400">
       <div className="justify-center items-center h-full flex flex-col overflow-hidden rounded-lg">
         <AutoAwesomeIcon className="mx-auto h-24 w-24 text-gray-400"/>
         <span className="mt-2 block text-lg font-semibold text-gray-900">Add an insight</span>
       </div>
       <div className="absolute bottom-4 flex w-full px-4">
       </div>
-      <CreateInsightForm open={open} setOpen={setOpen} credentials={credentials} posts={posts} setPosts={setPosts}/>
+      <CreateInsightForm open={open} setOpen={setOpen} credentials={credentials} documents={documents} posts={posts} setPosts={setPosts}/>
       {/* <PostDetail post={post} open={open} setOpen={setOpen} setPost={setPost} /> */}
     </div>
   );

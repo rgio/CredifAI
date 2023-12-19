@@ -5,7 +5,7 @@ import { NextResponse } from 'next/server'
 export async function POST(req: Request) {
   try {
     const text = await req.text();
-    const { title, description, credentialId, color } = JSON.parse(text);
+    const { path, title, description, credentialId, color } = JSON.parse(text);
 
     const result = await prisma.post.create({
       data: {
@@ -17,6 +17,25 @@ export async function POST(req: Request) {
         credential: { connect: { id: credentialId }},
       },
     });
+
+    //const path = 'test.pdf';
+    const comments = [description];
+    const sources = ['rob@truedot.ai'];
+   
+    const embeddingEndpoint = 'http://localhost:5000/add_verified_comments'; // Replace [FLASK_SERVER_URL] with your Flask server's URL
+    const embeddingResponse = await fetch(embeddingEndpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        document: path,
+        comments: comments,
+        sources: sources
+      })
+    });
+    const json = await embeddingResponse.json();
+    console.log(`RESPONSE IS ${JSON.stringify(json)}`)
 
     return NextResponse.json({ data: result }, { status: 200 })
   } catch (error) {

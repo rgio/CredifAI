@@ -88,7 +88,7 @@ function CommentInput({ post, setPost }: { post: PostProps, setPost: React.Dispa
 
   const importIssue = async () => {
     console.log(`_ISSUE`)
-    const rebase = await import('../utils/rebase');
+    const rebase = await import('lib/utils/rebase');
     setIssueAttestation(rebase);
     // issue(content, address, sign);
     //TODO: return jwt
@@ -342,7 +342,8 @@ function PostDetail({ post, open, setOpen, setPost }: {
 export default function Post({ postData }: { postData: PostProps }) {
   const [open, setOpen] = useState(false);
   const [post, setPost] = useState(postData);
-  const authorName = post.author ? post.author.name : "Unknown author";
+  const authorName = post.author ? post.author.name : "Unknown";
+  console.log(`POST: ${JSON.stringify(post)}`)
 
   const credential = {
     name: 'GitHub',
@@ -361,9 +362,9 @@ export default function Post({ postData }: { postData: PostProps }) {
             {post.content}
           </p>
           <div className="flex flex-row justify-between">
-            <span className="flex mt-2 items-center justify-center text-black text-sm text-bold">{post.numComments} Responses</span>
+            <span className="flex mt-2 items-center justify-center text-black text-sm text-bold">@{authorName}</span>
             <div className="flex flex-row">
-              <span className="flex mt-2 mr-2 items-center justify-center text-black text-sm text-bold">Requires </span>
+              {/* <span className="flex mt-2 mr-2 items-center justify-center text-black text-sm text-bold">Requires </span> */}
               <div className="flex flex-row bg-gray-300 rounded-full px-2 mt-2" style={{width: 'fit-content'}}>
                 <div className="flex items-center">
                   <img className="h-5 w-5 rounded-full" src={credential.imageUrl} alt="" />

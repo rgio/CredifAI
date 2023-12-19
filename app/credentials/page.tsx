@@ -13,9 +13,8 @@ export default async function Page({ params }: { params: { id: string } }) {
   }));
 
   return (
-    <>
-      <div className="page">
-        {/* <h1>Public Feed</h1> */}
+    <div className="page">
+      <div className="mx-auto h-full max-w-4xl space-y-8 p-px px-2 pt-20 lg:px-12 lg:py-16">
         <main>
           <div className="mx-auto mt-16 grid grid-cols-1 gap-10">
             {credentials && credentials.map((credential: any) => (
@@ -24,6 +23,6 @@ export default async function Page({ params }: { params: { id: string } }) {
           </div>
         </main>
       </div>
-    </>
+    </div>
   );
 }

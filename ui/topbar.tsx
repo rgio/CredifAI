@@ -5,7 +5,8 @@ import { useState } from 'react'
 import { ConnectWalletButton } from './connect-wallet-button';
 import { useSSX } from './_ssx';
 import { useTranslation } from 'react-i18next';
-import SendIcon from '@mui/icons-material/Send';
+// import SendIcon from '@mui/icons-material/Send';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 
 enum ModalState {
   SignIn,
@@ -53,13 +54,9 @@ export function TopBar() {
               href="/"
               className="group flex w-full items-center gap-x-2.5"
             >
-              <div className="h-12 w-12 rounded-full border border-white/30 group-hover:border-white/50">
-                {/* <NextLogo /> */}
-                <img src="/SapienLogoTransparent.png" alt="logo" />
-              </div>
-
-              <h3 className="font-semibold tracking-wide text-gray-400 group-hover:text-gray-50">
-                Sapien
+              <AutoAwesomeIcon className="text-indigo-600" />
+              <h3 className="font-semibold tracking-wide text-black ">
+                CredifAI
               </h3>
             </Link>
           </div>

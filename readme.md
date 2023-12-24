@@ -1,13 +1,16 @@
-# Next.js App Router Playground
+# CredifAI
 
-Next.js recently introduced the App Router with support for:
+CredifAI is a web application that uses verifiable credentials to let experts generate claims on data which are then used to improve language model output using retreival-augmented generation. It is built with Next.js, TypeScript, and Tailwind CSS.
 
-- **Layouts:** Easily share UI while preserving state and avoiding re-renders.
-- **Server Components:** Making server-first the default for the most dynamic applications.
-- **Streaming:** Display instant loading states and stream in updates.
-- **Suspense for Data Fetching:** `async`/`await` support and the `use` hook for component-level fetching.
+**Hosted Application:** https://credif-ai.vercel.app/
 
-The App Router can coexist with the existing `pages` directory for incremental adoption. While you **don't need to use the App Router** when upgrading to Next.js 13, we're laying the foundations to build complex interfaces while shipping less JavaScript.
+Credifai uses the following technologies for its core functionality:
+
+- **Verifiable Credentials:** SpruceID (https://www.spruceid.dev/) is used to generate and verify interoperable credentials that are accessible via an Ethereum Wallet.
+- **Vector Store:** ChromaDB is used to store embeddings of documents and expert generated attestations.
+- **Language Model:** CredifAI integrates with the openai API for synthesis, summarization and interpretation of uploaded documents.
+
+Credifai incorporates ChatbotUI for its chat interface (https://github.com/mckaywrigley/chatbot-ui)
 
 ## Running Locally
 
@@ -26,3 +29,6 @@ pnpm dev
 ## Documentation
 
 https://nextjs.org/docs
+https://www.spruceid.dev/
+https://docs.trychroma.com/
+https://platform.openai.com/docs/api-reference

@@ -28,7 +28,7 @@ pnpm dev
 
 ## Documentation
 
-https://nextjs.org/docs
-https://www.spruceid.dev/
-https://docs.trychroma.com/
-https://platform.openai.com/docs/api-reference
+NextJS - https://nextjs.org/docs \n
+SpruceID - https://www.spruceid.dev/ \n
+ChromaDB - https://docs.trychroma.com/ \n
+OpenAI - https://platform.openai.com/docs/api-reference

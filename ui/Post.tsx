@@ -82,10 +82,6 @@ function CommentInput({ post, setPost }: { post: PostProps, setPost: React.Dispa
 
   const { ssx } = useSSX();
 
-  useEffect(() => {
-    console.log(`SSX: ${util.inspect(ssx)}`);
-  }, [ssx]);
-
   const importIssue = async () => {
     console.log(`_ISSUE`)
     const rebase = await import('lib/utils/rebase');
@@ -343,8 +339,7 @@ export default function Post({ postData }: { postData: PostProps }) {
   const [open, setOpen] = useState(false);
   const [post, setPost] = useState(postData);
   const authorName = post.author ? post.author.name : "Unknown";
-  console.log(`POST: ${JSON.stringify(post)}`)
-
+  
   const credential = {
     name: 'GitHub',
     imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSevjLMoY69RrmdOeKZONLsRySpvdkEwP-SaraZ3hc_8WFS0eR1ALIIL9xuP2_nWbRnawY&usqp=CAU'

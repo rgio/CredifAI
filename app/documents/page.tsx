@@ -7,7 +7,7 @@ const util = require('util');
 export default async function Page({ params }: { params: { id: string } }) {
   const documents = await prisma.document.findMany();
 
-  // console.log(`documents: ${util.inspect(documents)}`);
+  console.log(`documents: ${util.inspect(documents)}`);
 
   return (
     <div className="page">

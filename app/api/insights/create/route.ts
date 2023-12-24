@@ -20,7 +20,13 @@ export async function POST(req: Request) {
 
     //const path = 'test.pdf';
     const comments = [description];
-    const sources = ['rob@truedot.ai'];
+    let sources;
+    if (credentialId == 'clqcs6195000yy9gwdnmonfkk') {
+      sources = ['Marketing Director @Target'];
+    }
+    else {
+      sources = ['AI Researcher @Google'];
+    }
    
     const embeddingEndpoint = 'http://localhost:5000/add_verified_comments'; // Replace [FLASK_SERVER_URL] with your Flask server's URL
     const embeddingResponse = await fetch(embeddingEndpoint, {

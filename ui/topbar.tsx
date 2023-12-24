@@ -53,8 +53,9 @@ export function TopBar() {
               href="/"
               className="group flex w-full items-center gap-x-2.5"
             >
-              <div className="h-7 w-7 rounded-full border border-white/30 group-hover:border-white/50">
-                <NextLogo />
+              <div className="h-12 w-12 rounded-full border border-white/30 group-hover:border-white/50">
+                {/* <NextLogo /> */}
+                <img src="/SapienLogoTransparent.png" alt="logo" />
               </div>
 
               <h3 className="font-semibold tracking-wide text-gray-400 group-hover:text-gray-50">

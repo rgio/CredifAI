@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
-import Post from '#/ui/post';
-import CreateInsight from '#/ui/create-insight';
+import Post from 'ui/post';
+import CreateInsight from 'ui/create-insight';
 
 export default function PostFeed({postsData, credentialsData, documentsData}:{postsData:any, credentialsData:any, documentsData:any}) {
   const [posts, setPosts] = useState(postsData);

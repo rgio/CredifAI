@@ -1,0 +1,61 @@
+diff --git a/dist/types/human-readable/formatAbi.d.ts b/dist/types/human-readable/formatAbi.d.ts
+index 80d38e3d8c49cf3ef11616bf171ad96b358dd2d6..ff1bd3d635154df7eeda3b71fe74b6aa768eb01b 100644
+--- a/dist/types/human-readable/formatAbi.d.ts
++++ b/dist/types/human-readable/formatAbi.d.ts
+@@ -15,5 +15,5 @@ export type FormatAbi<TAbi extends Abi | readonly unknown[]> = Abi extends TAbi
+  * @param abi - ABI
+  * @returns Human-readable ABI
+  */
+-export declare function formatAbi<const TAbi extends Abi | readonly unknown[]>(abi: TAbi): FormatAbi<TAbi>;
++export declare function formatAbi<TAbi extends Abi | readonly unknown[]>(abi: TAbi): FormatAbi<TAbi>;
+ //# sourceMappingURL=formatAbi.d.ts.map
+\ No newline at end of file
+diff --git a/dist/types/human-readable/formatAbiItem.d.ts b/dist/types/human-readable/formatAbiItem.d.ts
+index d09f5790a13128b3e8dec719a0a1b663a695b9b3..67f03a805d3cb8249f618b9c3b6aa117e3b579dc 100644
+--- a/dist/types/human-readable/formatAbiItem.d.ts
++++ b/dist/types/human-readable/formatAbiItem.d.ts
+@@ -18,6 +18,6 @@ type FormatAbiParameters<TAbiParameters extends readonly (AbiParameter | AbiEven
+  * @param abiItem - ABI item
+  * @returns Human-readable ABI item
+  */
+-export declare function formatAbiItem<const TAbiItem extends Abi[number]>(abiItem: TAbiItem): FormatAbiItem<TAbiItem>;
++export declare function formatAbiItem<TAbiItem extends Abi[number]>(abiItem: TAbiItem): FormatAbiItem<TAbiItem>;
+ export {};
+ //# sourceMappingURL=formatAbiItem.d.ts.map
+\ No newline at end of file
+diff --git a/dist/types/human-readable/formatAbiParameter.d.ts b/dist/types/human-readable/formatAbiParameter.d.ts
+index be81571abe1811e95bf2f69bccb6ffa690f64f14..de7275b0f7369c7fbafa962400ac1d54a46d4a23 100644
+--- a/dist/types/human-readable/formatAbiParameter.d.ts
++++ b/dist/types/human-readable/formatAbiParameter.d.ts
+@@ -45,5 +45,5 @@ export type FormatAbiParameter<TAbiParameter extends AbiParameter | AbiEventPara
+  * const result = formatAbiParameter({ type: 'address', name: 'from' })
+  * //    ^? const result: 'address from'
+  */
+-export declare function formatAbiParameter<const TAbiParameter extends AbiParameter | AbiEventParameter>(abiParameter: TAbiParameter): FormatAbiParameter<TAbiParameter>;
++export declare function formatAbiParameter<TAbiParameter extends AbiParameter | AbiEventParameter>(abiParameter: TAbiParameter): FormatAbiParameter<TAbiParameter>;
+ //# sourceMappingURL=formatAbiParameter.d.ts.map
+\ No newline at end of file
+diff --git a/dist/types/human-readable/formatAbiParameters.d.ts b/dist/types/human-readable/formatAbiParameters.d.ts
+index 061a992fa9c871d314365004742617b67af9384d..87b0ad8ced9166b82ebd44df634ebcc2ec9f732a 100644
+--- a/dist/types/human-readable/formatAbiParameters.d.ts
++++ b/dist/types/human-readable/formatAbiParameters.d.ts
+@@ -33,7 +33,7 @@ export type FormatAbiParameters<TAbiParameters extends readonly [
+  *   { type: 'uint256', name: 'tokenId' },
+  * ])
+  */
+-export declare function formatAbiParameters<const TAbiParameters extends readonly [
++export declare function formatAbiParameters<TAbiParameters extends readonly [
+     AbiParameter | AbiEventParameter,
+     ...(readonly (AbiParameter | AbiEventParameter)[])
+ ]>(abiParameters: TAbiParameters): FormatAbiParameters<TAbiParameters>;
+diff --git a/dist/types/human-readable/parseAbi.d.ts b/dist/types/human-readable/parseAbi.d.ts
+index f5cadc1f6a918010f68904ed053a6e1b77e31b9e..970d58b3ef463d997bbb0fb515c207848e3f56e8 100644
+--- a/dist/types/human-readable/parseAbi.d.ts
++++ b/dist/types/human-readable/parseAbi.d.ts
+@@ -34,5 +34,5 @@ export type ParseAbi<TSignatures extends readonly string[]> = string[] extends T
+  *   'event Transfer(address indexed from, address indexed to, uint256 amount)',
+  * ])
+  */
+-export declare function parseAbi<const TSignatures extends readonly string[]>(signatures: TSignatures['length'] extends 0 ? Error<'At least one signature required'> : Signatures<TSignatures> extends TSignatures ? TSignatures : Signatures<TSignatures>): ParseAbi<TSignatures>;
++export declare function parseAbi<TSignatures extends readonly string[]>(signatures: TSignatures['length'] extends 0 ? Error<'At least one signature required'> : Signatures<TSignatures> extends TSignatures ? TSignatures : Signatures<TSignatures>): ParseAbi<TSignatures>;
+ //# sourceMappingURL=parseAbi.d.ts.map

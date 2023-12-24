@@ -1,0 +1,608 @@
+diff --git a/_types/accounts/types.d.ts b/_types/accounts/types.d.ts
+index eca961151fea7967cf7100536d04a9f25c3326dd..eb837bcc81ba10f767e70c021c306f1755bceabd 100644
+--- a/_types/accounts/types.d.ts
++++ b/_types/accounts/types.d.ts
+@@ -16,7 +16,7 @@ export type CustomSource = {
+     signTransaction: <TTransactionSerializable extends TransactionSerializable>(transaction: TTransactionSerializable, args?: {
+         serializer?: SerializeTransactionFn<TTransactionSerializable>;
+     }) => Promise<IsNarrowable<TransactionSerialized<GetTransactionType<TTransactionSerializable>>, Hash> extends true ? TransactionSerialized<GetTransactionType<TTransactionSerializable>> : Hash>;
+-    signTypedData: <const TTypedData extends TypedData | {
++    signTypedData: <TTypedData extends TypedData | {
+         [key: string]: unknown;
+     }, TPrimaryType extends string = string>(typedData: TypedDataDefinition<TTypedData, TPrimaryType>) => Promise<Hash>;
+ };
+diff --git a/_types/accounts/utils/signTypedData.d.ts b/_types/accounts/utils/signTypedData.d.ts
+index 6af808be005416f92cf9c57ae30ee6fecd70b45f..bdbf0797adcbce53c4afcb50c6874bdec9f00aa7 100644
+--- a/_types/accounts/utils/signTypedData.d.ts
++++ b/_types/accounts/utils/signTypedData.d.ts
+@@ -19,7 +19,7 @@ export type SignTypedDataErrorType = HashTypedDataErrorType | SignErrorType | Si
+  *
+  * @returns The signature.
+  */
+-export declare function signTypedData<const TTypedData extends TypedData | {
++export declare function signTypedData<TTypedData extends TypedData | {
+     [key: string]: unknown;
+ }, TPrimaryType extends string = string>({ privateKey, ...typedData }: SignTypedDataParameters<TTypedData, TPrimaryType>): Promise<SignTypedDataReturnType>;
+ //# sourceMappingURL=signTypedData.d.ts.map
+\ No newline at end of file
+diff --git a/_types/actions/getContract.d.ts b/_types/actions/getContract.d.ts
+index 6e54d87c79882eb26fce0baf9f1de237d7a47cb1..82b6fb2bdc68d616a642091bfb9c96392656dbf0 100644
+--- a/_types/actions/getContract.d.ts
++++ b/_types/actions/getContract.d.ts
+@@ -276,7 +276,7 @@ export type GetContractErrorType = ErrorType;
+  *   publicClient,
+  * })
+  */
+-export declare function getContract<TTransport extends Transport, TAddress extends Address, const TAbi extends Abi | readonly unknown[], TChain extends Chain | undefined = Chain | undefined, TAccount extends Account | undefined = Account | undefined, TPublicClient extends Client<TTransport, TChain> | undefined = Client<TTransport, TChain> | undefined, TWalletClient extends Client<TTransport, TChain, TAccount> | undefined = Client<TTransport, TChain, TAccount> | undefined>({ abi, address, publicClient, walletClient, }: GetContractParameters<TTransport, TChain, TAccount, TAbi, TPublicClient, TWalletClient, TAddress>): GetContractReturnType<TAbi, TPublicClient, TWalletClient, TAddress>;
++export declare function getContract<TTransport extends Transport, TAddress extends Address, TAbi extends Abi | readonly unknown[], TChain extends Chain | undefined = Chain | undefined, TAccount extends Account | undefined = Account | undefined, TPublicClient extends Client<TTransport, TChain> | undefined = Client<TTransport, TChain> | undefined, TWalletClient extends Client<TTransport, TChain, TAccount> | undefined = Client<TTransport, TChain, TAccount> | undefined>({ abi, address, publicClient, walletClient, }: GetContractParameters<TTransport, TChain, TAccount, TAbi, TPublicClient, TWalletClient, TAddress>): GetContractReturnType<TAbi, TPublicClient, TWalletClient, TAddress>;
+ /**
+  * @internal exporting for testing only
+  */
+@@ -306,7 +306,7 @@ type GetWriteFunction<Narrowable extends boolean, TChain extends Chain | undefin
+ ]) => Promise<WriteContractReturnType> : <TChainOverride extends Chain | undefined, Options extends Prettify<UnionOmit<WriteContractParameters<TAbi, TFunctionName, TChain, TAccount, TChainOverride>, 'abi' | 'address' | 'args' | 'functionName'>>, Rest extends unknown[] = IsOptionsRequired extends true ? [options: Options] : [options?: Options]>(...parameters: Rest | [args: readonly unknown[], ...parameters: Rest]) => Promise<WriteContractReturnType>;
+ type GetEventFilter<Narrowable extends boolean, TAbi extends Abi | readonly unknown[], TEventName extends string, TAbiEvent extends AbiEvent = TAbi extends Abi ? ExtractAbiEvent<TAbi, TEventName> : AbiEvent, Args = AbiEventParametersToPrimitiveTypes<TAbiEvent['inputs']>, Options = Prettify<Omit<CreateContractEventFilterParameters<TAbi, TEventName>, 'abi' | 'address' | 'args' | 'eventName' | 'strict'>>, IndexedInputs = Extract<TAbiEvent['inputs'][number], {
+     indexed: true;
+-}>> = Narrowable extends true ? <const TArgs extends MaybeExtractEventArgsFromAbi<TAbi, TEventName> | undefined, TStrict extends boolean | undefined = undefined>(...parameters: IsNever<IndexedInputs> extends true ? [options?: Options & {
++}>> = Narrowable extends true ? <TArgs extends MaybeExtractEventArgsFromAbi<TAbi, TEventName> | undefined, TStrict extends boolean | undefined = undefined>(...parameters: IsNever<IndexedInputs> extends true ? [options?: Options & {
+     strict?: TStrict;
+ }] : [
+     args: Args | (Args extends TArgs ? Readonly<TArgs> : never),
+diff --git a/_types/actions/public/createContractEventFilter.d.ts b/_types/actions/public/createContractEventFilter.d.ts
+index be8b6c4ba27555e8de06642dbf19863280bb6fdb..36562d037260e0bd1dfc3227aa8b217c95f65761 100644
+--- a/_types/actions/public/createContractEventFilter.d.ts
++++ b/_types/actions/public/createContractEventFilter.d.ts
+@@ -51,5 +51,5 @@ export type CreateContractEventFilterErrorType = EncodeEventTopicsErrorType | Re
+  *   abi: parseAbi(['event Transfer(address indexed, address indexed, uint256)']),
+  * })
+  */
+-export declare function createContractEventFilter<TChain extends Chain | undefined, const TAbi extends Abi | readonly unknown[], TEventName extends string | undefined, TArgs extends MaybeExtractEventArgsFromAbi<TAbi, TEventName> | undefined, TStrict extends boolean | undefined = undefined, TFromBlock extends BlockNumber | BlockTag | undefined = undefined, TToBlock extends BlockNumber | BlockTag | undefined = undefined>(client: Client<Transport, TChain>, { address, abi, args, eventName, fromBlock, strict, toBlock, }: CreateContractEventFilterParameters<TAbi, TEventName, TArgs, TStrict, TFromBlock, TToBlock>): Promise<CreateContractEventFilterReturnType<TAbi, TEventName, TArgs, TStrict, TFromBlock, TToBlock>>;
++export declare function createContractEventFilter<TChain extends Chain | undefined, TAbi extends Abi | readonly unknown[], TEventName extends string | undefined, TArgs extends MaybeExtractEventArgsFromAbi<TAbi, TEventName> | undefined, TStrict extends boolean | undefined = undefined, TFromBlock extends BlockNumber | BlockTag | undefined = undefined, TToBlock extends BlockNumber | BlockTag | undefined = undefined>(client: Client<Transport, TChain>, { address, abi, args, eventName, fromBlock, strict, toBlock, }: CreateContractEventFilterParameters<TAbi, TEventName, TArgs, TStrict, TFromBlock, TToBlock>): Promise<CreateContractEventFilterReturnType<TAbi, TEventName, TArgs, TStrict, TFromBlock, TToBlock>>;
+ //# sourceMappingURL=createContractEventFilter.d.ts.map
+\ No newline at end of file
+diff --git a/_types/actions/public/createEventFilter.d.ts b/_types/actions/public/createEventFilter.d.ts
+index 7f001a8731994c722f549bc75e198d9bcedfd74e..df5131ff02b1e1d1d65fcad52d0855bf36df1334 100644
+--- a/_types/actions/public/createEventFilter.d.ts
++++ b/_types/actions/public/createEventFilter.d.ts
+@@ -77,5 +77,5 @@ export type CreateEventFilterErrorType = EncodeEventTopicsErrorType | RequestErr
+  *   address: '0xfba3912ca04dd458c843e2ee08967fc04f3579c2',
+  * })
+  */
+-export declare function createEventFilter<TChain extends Chain | undefined, const TAbiEvent extends AbiEvent | undefined = undefined, const TAbiEvents extends readonly AbiEvent[] | readonly unknown[] | undefined = TAbiEvent extends AbiEvent ? [TAbiEvent] : undefined, TStrict extends boolean | undefined = undefined, TFromBlock extends BlockNumber<bigint> | BlockTag | undefined = undefined, TToBlock extends BlockNumber<bigint> | BlockTag | undefined = undefined, _EventName extends string | undefined = MaybeAbiEventName<TAbiEvent>, _Args extends MaybeExtractEventArgsFromAbi<TAbiEvents, _EventName> | undefined = undefined>(client: Client<Transport, TChain>, { address, args, event, events: events_, fromBlock, strict, toBlock, }?: CreateEventFilterParameters<TAbiEvent, TAbiEvents, TStrict, TFromBlock, TToBlock, _EventName, _Args>): Promise<CreateEventFilterReturnType<TAbiEvent, TAbiEvents, TStrict, TFromBlock, TToBlock, _EventName, _Args>>;
++export declare function createEventFilter<TChain extends Chain | undefined, TAbiEvent extends AbiEvent | undefined = undefined, TAbiEvents extends readonly AbiEvent[] | readonly unknown[] | undefined = TAbiEvent extends AbiEvent ? [TAbiEvent] : undefined, TStrict extends boolean | undefined = undefined, TFromBlock extends BlockNumber<bigint> | BlockTag | undefined = undefined, TToBlock extends BlockNumber<bigint> | BlockTag | undefined = undefined, _EventName extends string | undefined = MaybeAbiEventName<TAbiEvent>, _Args extends MaybeExtractEventArgsFromAbi<TAbiEvents, _EventName> | undefined = undefined>(client: Client<Transport, TChain>, { address, args, event, events: events_, fromBlock, strict, toBlock, }?: CreateEventFilterParameters<TAbiEvent, TAbiEvents, TStrict, TFromBlock, TToBlock, _EventName, _Args>): Promise<CreateEventFilterReturnType<TAbiEvent, TAbiEvents, TStrict, TFromBlock, TToBlock, _EventName, _Args>>;
+ //# sourceMappingURL=createEventFilter.d.ts.map
+\ No newline at end of file
+diff --git a/_types/actions/public/estimateContractGas.d.ts b/_types/actions/public/estimateContractGas.d.ts
+index f55abcde629d9031757bcabe8b43d8bfcb188d9d..414a7a3b4f48f745d1e7b5379d39a4a8c623bcff 100644
+--- a/_types/actions/public/estimateContractGas.d.ts
++++ b/_types/actions/public/estimateContractGas.d.ts
+@@ -39,5 +39,5 @@ export type EstimateContractGasErrorType = GetContractErrorReturnType<EncodeFunc
+  *   account: '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266',
+  * })
+  */
+-export declare function estimateContractGas<const TAbi extends Abi | readonly unknown[], TFunctionName extends string, TChain extends Chain | undefined, TAccount extends Account | undefined = undefined>(client: Client<Transport, TChain, TAccount>, { abi, address, args, functionName, ...request }: EstimateContractGasParameters<TAbi, TFunctionName, TChain, TAccount>): Promise<EstimateContractGasReturnType>;
++export declare function estimateContractGas<TAbi extends Abi | readonly unknown[], TFunctionName extends string, TChain extends Chain | undefined, TAccount extends Account | undefined = undefined>(client: Client<Transport, TChain, TAccount>, { abi, address, args, functionName, ...request }: EstimateContractGasParameters<TAbi, TFunctionName, TChain, TAccount>): Promise<EstimateContractGasReturnType>;
+ //# sourceMappingURL=estimateContractGas.d.ts.map
+\ No newline at end of file
+diff --git a/_types/actions/public/getContractEvents.d.ts b/_types/actions/public/getContractEvents.d.ts
+index f2310e73824d61a01f473f62699b32d550fa1ee1..2ed51ec80410686813bafdd39af09b12e463e446 100644
+--- a/_types/actions/public/getContractEvents.d.ts
++++ b/_types/actions/public/getContractEvents.d.ts
+@@ -62,5 +62,5 @@ export type GetContractEventsErrorType = GetAbiItemErrorType | GetLogsErrorType
+  *  eventName: 'Transfer'
+  * })
+  */
+-export declare function getContractEvents<TChain extends Chain | undefined, const TAbi extends Abi | readonly unknown[], TEventName extends string | undefined = undefined, TStrict extends boolean | undefined = undefined, TFromBlock extends BlockNumber | BlockTag | undefined = undefined, TToBlock extends BlockNumber | BlockTag | undefined = undefined>(client: Client<Transport, TChain>, { abi, address, args, blockHash, eventName, fromBlock, toBlock, strict, }: GetContractEventsParameters<TAbi, TEventName, TStrict, TFromBlock, TToBlock>): Promise<GetContractEventsReturnType<TAbi, TEventName, TStrict, TFromBlock, TToBlock>>;
++export declare function getContractEvents<TChain extends Chain | undefined, TAbi extends Abi | readonly unknown[], TEventName extends string | undefined = undefined, TStrict extends boolean | undefined = undefined, TFromBlock extends BlockNumber | BlockTag | undefined = undefined, TToBlock extends BlockNumber | BlockTag | undefined = undefined>(client: Client<Transport, TChain>, { abi, address, args, blockHash, eventName, fromBlock, toBlock, strict, }: GetContractEventsParameters<TAbi, TEventName, TStrict, TFromBlock, TToBlock>): Promise<GetContractEventsReturnType<TAbi, TEventName, TStrict, TFromBlock, TToBlock>>;
+ //# sourceMappingURL=getContractEvents.d.ts.map
+\ No newline at end of file
+diff --git a/_types/actions/public/getFilterChanges.d.ts b/_types/actions/public/getFilterChanges.d.ts
+index e1732aee40a2cbe549b6cf47d3d5ad6bd2ae943f..b246089445f131291ebf8c749d606bcab3bab378 100644
+--- a/_types/actions/public/getFilterChanges.d.ts
++++ b/_types/actions/public/getFilterChanges.d.ts
+@@ -97,5 +97,5 @@ export type GetFilterChangesErrorType = RequestErrorType | DecodeEventLogErrorTy
+  * const filter = await createPendingTransactionFilter(client)
+  * const hashes = await getFilterChanges(client, { filter })
+  */
+-export declare function getFilterChanges<TTransport extends Transport, TChain extends Chain | undefined, TFilterType extends FilterType, const TAbi extends Abi | readonly unknown[] | undefined, TEventName extends string | undefined, TStrict extends boolean | undefined = undefined, TFromBlock extends BlockNumber | BlockTag | undefined = undefined, TToBlock extends BlockNumber | BlockTag | undefined = undefined>(_client: Client<TTransport, TChain>, { filter, }: GetFilterChangesParameters<TFilterType, TAbi, TEventName, TStrict, TFromBlock, TToBlock>): Promise<GetFilterChangesReturnType<TFilterType, TAbi, TEventName, TStrict, TFromBlock, TToBlock>>;
++export declare function getFilterChanges<TTransport extends Transport, TChain extends Chain | undefined, TFilterType extends FilterType, TAbi extends Abi | readonly unknown[] | undefined, TEventName extends string | undefined, TStrict extends boolean | undefined = undefined, TFromBlock extends BlockNumber | BlockTag | undefined = undefined, TToBlock extends BlockNumber | BlockTag | undefined = undefined>(_client: Client<TTransport, TChain>, { filter, }: GetFilterChangesParameters<TFilterType, TAbi, TEventName, TStrict, TFromBlock, TToBlock>): Promise<GetFilterChangesReturnType<TFilterType, TAbi, TEventName, TStrict, TFromBlock, TToBlock>>;
+ //# sourceMappingURL=getFilterChanges.d.ts.map
+\ No newline at end of file
+diff --git a/_types/actions/public/getFilterLogs.d.ts b/_types/actions/public/getFilterLogs.d.ts
+index 672f98156163ab2f2c3933fa170dfcd26972303a..1d12cae7487341426dbd6e89701d2dfc4fca0f0a 100644
+--- a/_types/actions/public/getFilterLogs.d.ts
++++ b/_types/actions/public/getFilterLogs.d.ts
+@@ -41,5 +41,5 @@ export type GetFilterLogsErrorType = RequestErrorType | DecodeEventLogErrorType
+  * })
+  * const logs = await getFilterLogs(client, { filter })
+  */
+-export declare function getFilterLogs<TChain extends Chain | undefined, const TAbi extends Abi | readonly unknown[] | undefined, TEventName extends string | undefined, TStrict extends boolean | undefined = undefined, TFromBlock extends BlockNumber | BlockTag | undefined = undefined, TToBlock extends BlockNumber | BlockTag | undefined = undefined>(_client: Client<Transport, TChain>, { filter, }: GetFilterLogsParameters<TAbi, TEventName, TStrict, TFromBlock, TToBlock>): Promise<GetFilterLogsReturnType<TAbi, TEventName, TStrict, TFromBlock, TToBlock>>;
++export declare function getFilterLogs<TChain extends Chain | undefined, TAbi extends Abi | readonly unknown[] | undefined, TEventName extends string | undefined, TStrict extends boolean | undefined = undefined, TFromBlock extends BlockNumber | BlockTag | undefined = undefined, TToBlock extends BlockNumber | BlockTag | undefined = undefined>(_client: Client<Transport, TChain>, { filter, }: GetFilterLogsParameters<TAbi, TEventName, TStrict, TFromBlock, TToBlock>): Promise<GetFilterLogsReturnType<TAbi, TEventName, TStrict, TFromBlock, TToBlock>>;
+ //# sourceMappingURL=getFilterLogs.d.ts.map
+\ No newline at end of file
+diff --git a/_types/actions/public/getLogs.d.ts b/_types/actions/public/getLogs.d.ts
+index 62cece31ed2075fa034e47b6640d458da4862b02..74ffa527ba44c2dbb37c43835d9ade430975abc1 100644
+--- a/_types/actions/public/getLogs.d.ts
++++ b/_types/actions/public/getLogs.d.ts
+@@ -74,5 +74,5 @@ export type GetLogsErrorType = DecodeEventLogErrorType | EncodeEventTopicsErrorT
+  * })
+  * const logs = await getLogs(client)
+  */
+-export declare function getLogs<TChain extends Chain | undefined, const TAbiEvent extends AbiEvent | undefined = undefined, const TAbiEvents extends readonly AbiEvent[] | readonly unknown[] | undefined = TAbiEvent extends AbiEvent ? [TAbiEvent] : undefined, TStrict extends boolean | undefined = undefined, TFromBlock extends BlockNumber | BlockTag | undefined = undefined, TToBlock extends BlockNumber | BlockTag | undefined = undefined>(client: Client<Transport, TChain>, { address, blockHash, fromBlock, toBlock, event, events: events_, args, strict: strict_, }?: GetLogsParameters<TAbiEvent, TAbiEvents, TStrict, TFromBlock, TToBlock>): Promise<GetLogsReturnType<TAbiEvent, TAbiEvents, TStrict, TFromBlock, TToBlock>>;
++export declare function getLogs<TChain extends Chain | undefined, TAbiEvent extends AbiEvent | undefined = undefined, TAbiEvents extends readonly AbiEvent[] | readonly unknown[] | undefined = TAbiEvent extends AbiEvent ? [TAbiEvent] : undefined, TStrict extends boolean | undefined = undefined, TFromBlock extends BlockNumber | BlockTag | undefined = undefined, TToBlock extends BlockNumber | BlockTag | undefined = undefined>(client: Client<Transport, TChain>, { address, blockHash, fromBlock, toBlock, event, events: events_, args, strict: strict_, }?: GetLogsParameters<TAbiEvent, TAbiEvents, TStrict, TFromBlock, TToBlock>): Promise<GetLogsReturnType<TAbiEvent, TAbiEvents, TStrict, TFromBlock, TToBlock>>;
+ //# sourceMappingURL=getLogs.d.ts.map
+\ No newline at end of file
+diff --git a/_types/actions/public/readContract.d.ts b/_types/actions/public/readContract.d.ts
+index c309ed0b39a54045ab8a62b40c29b34ac367b93d..57ed62ddcf0e6b9b85035c01c4a9bcb02b9ae1c0 100644
+--- a/_types/actions/public/readContract.d.ts
++++ b/_types/actions/public/readContract.d.ts
+@@ -41,5 +41,5 @@ export type ReadContractErrorType = GetContractErrorReturnType<CallErrorType | E
+  * })
+  * // 424122n
+  */
+-export declare function readContract<TChain extends Chain | undefined, const TAbi extends Abi | readonly unknown[], TFunctionName extends string>(client: Client<Transport, TChain>, { abi, address, args, functionName, ...callRequest }: ReadContractParameters<TAbi, TFunctionName>): Promise<ReadContractReturnType<TAbi, TFunctionName>>;
++export declare function readContract<TChain extends Chain | undefined, TAbi extends Abi | readonly unknown[], TFunctionName extends string>(client: Client<Transport, TChain>, { abi, address, args, functionName, ...callRequest }: ReadContractParameters<TAbi, TFunctionName>): Promise<ReadContractReturnType<TAbi, TFunctionName>>;
+ //# sourceMappingURL=readContract.d.ts.map
+\ No newline at end of file
+diff --git a/_types/actions/public/simulateContract.d.ts b/_types/actions/public/simulateContract.d.ts
+index ea5f37f525370e5de3f4b002703a5413d5bf0395..ae874f78b71e9f87104a5ddefcd0f13f0b782b9e 100644
+--- a/_types/actions/public/simulateContract.d.ts
++++ b/_types/actions/public/simulateContract.d.ts
+@@ -56,5 +56,5 @@ export type SimulateContractErrorType = ParseAccountErrorType | EncodeFunctionDa
+  *   account: '0xA0Cf798816D4b9b9866b5330EEa46a18382f251e',
+  * })
+  */
+-export declare function simulateContract<TChain extends Chain | undefined, const TAbi extends Abi | readonly unknown[], TFunctionName extends string, TChainOverride extends Chain | undefined = undefined>(client: Client<Transport, TChain>, { abi, address, args, dataSuffix, functionName, ...callRequest }: SimulateContractParameters<TAbi, TFunctionName, TChain, TChainOverride>): Promise<SimulateContractReturnType<TAbi, TFunctionName, TChain, TChainOverride>>;
++export declare function simulateContract<TChain extends Chain | undefined, TAbi extends Abi | readonly unknown[], TFunctionName extends string, TChainOverride extends Chain | undefined = undefined>(client: Client<Transport, TChain>, { abi, address, args, dataSuffix, functionName, ...callRequest }: SimulateContractParameters<TAbi, TFunctionName, TChain, TChainOverride>): Promise<SimulateContractReturnType<TAbi, TFunctionName, TChain, TChainOverride>>;
+ //# sourceMappingURL=simulateContract.d.ts.map
+\ No newline at end of file
+diff --git a/_types/actions/public/watchContractEvent.d.ts b/_types/actions/public/watchContractEvent.d.ts
+index 6e80751760a039998a5d2f0f1b3c50075653458f..ff65b0774ad6e287afb6bc831fb7aa5d9b5a469a 100644
+--- a/_types/actions/public/watchContractEvent.d.ts
++++ b/_types/actions/public/watchContractEvent.d.ts
+@@ -88,6 +88,6 @@ export type WatchContractEventErrorType = StringifyErrorType | ObserveErrorType
+  *   onLogs: (logs) => console.log(logs),
+  * })
+  */
+-export declare function watchContractEvent<TChain extends Chain | undefined, const TAbi extends Abi | readonly unknown[], TEventName extends string, TStrict extends boolean | undefined = undefined>(client: Client<Transport, TChain>, { abi, address, args, batch, eventName, onError, onLogs, poll: poll_, pollingInterval, strict: strict_, }: WatchContractEventParameters<TAbi, TEventName, TStrict>): WatchContractEventReturnType;
++export declare function watchContractEvent<TChain extends Chain | undefined, TAbi extends Abi | readonly unknown[], TEventName extends string, TStrict extends boolean | undefined = undefined>(client: Client<Transport, TChain>, { abi, address, args, batch, eventName, onError, onLogs, poll: poll_, pollingInterval, strict: strict_, }: WatchContractEventParameters<TAbi, TEventName, TStrict>): WatchContractEventReturnType;
+ export {};
+ //# sourceMappingURL=watchContractEvent.d.ts.map
+\ No newline at end of file
+diff --git a/_types/actions/public/watchEvent.d.ts b/_types/actions/public/watchEvent.d.ts
+index 46d4fce41a98bfc5331ebc65f4ad9b00375558a8..a24e1ce68b1b416831ac246db38107198f805e53 100644
+--- a/_types/actions/public/watchEvent.d.ts
++++ b/_types/actions/public/watchEvent.d.ts
+@@ -103,6 +103,6 @@ export type WatchEventErrorType = StringifyErrorType | ObserveErrorType | ErrorT
+  *   onLogs: (logs) => console.log(logs),
+  * })
+  */
+-export declare function watchEvent<TChain extends Chain | undefined, const TAbiEvent extends AbiEvent | undefined = undefined, const TAbiEvents extends readonly AbiEvent[] | readonly unknown[] | undefined = TAbiEvent extends AbiEvent ? [TAbiEvent] : undefined, TStrict extends boolean | undefined = undefined, _EventName extends string | undefined = undefined>(client: Client<Transport, TChain>, { address, args, batch, event, events, onError, onLogs, poll: poll_, pollingInterval, strict: strict_, }: WatchEventParameters<TAbiEvent, TAbiEvents, TStrict>): WatchEventReturnType;
++export declare function watchEvent<TChain extends Chain | undefined, TAbiEvent extends AbiEvent | undefined = undefined, TAbiEvents extends readonly AbiEvent[] | readonly unknown[] | undefined = TAbiEvent extends AbiEvent ? [TAbiEvent] : undefined, TStrict extends boolean | undefined = undefined, _EventName extends string | undefined = undefined>(client: Client<Transport, TChain>, { address, args, batch, event, events, onError, onLogs, poll: poll_, pollingInterval, strict: strict_, }: WatchEventParameters<TAbiEvent, TAbiEvents, TStrict>): WatchEventReturnType;
+ export {};
+ //# sourceMappingURL=watchEvent.d.ts.map
+\ No newline at end of file
+diff --git a/_types/actions/wallet/deployContract.d.ts b/_types/actions/wallet/deployContract.d.ts
+index 02e3c743f984196a4778a3c0877c75c06ec89e3b..d13e17de2e71d45c0e7d2b4240b1438adba3245f 100644
+--- a/_types/actions/wallet/deployContract.d.ts
++++ b/_types/actions/wallet/deployContract.d.ts
+@@ -42,5 +42,5 @@ export type DeployContractErrorType = SendTransactionErrorType | ErrorType;
+  *   bytecode: '0x608060405260405161083e38038061083e833981016040819052610...',
+  * })
+  */
+-export declare function deployContract<const TAbi extends Abi | readonly unknown[], TChain extends Chain | undefined, TAccount extends Account | undefined, TChainOverride extends Chain | undefined = undefined>(walletClient: Client<Transport, TChain, TAccount>, { abi, args, bytecode, ...request }: DeployContractParameters<TAbi, TChain, TAccount, TChainOverride>): Promise<DeployContractReturnType>;
++export declare function deployContract<TAbi extends Abi | readonly unknown[], TChain extends Chain | undefined, TAccount extends Account | undefined, TChainOverride extends Chain | undefined = undefined>(walletClient: Client<Transport, TChain, TAccount>, { abi, args, bytecode, ...request }: DeployContractParameters<TAbi, TChain, TAccount, TChainOverride>): Promise<DeployContractReturnType>;
+ //# sourceMappingURL=deployContract.d.ts.map
+\ No newline at end of file
+diff --git a/_types/actions/wallet/signTypedData.d.ts b/_types/actions/wallet/signTypedData.d.ts
+index de7213047075a6e6656df6a6314eef8553051a7b..d426e63588cbb075c94c29d3de3d92e390163f3f 100644
+--- a/_types/actions/wallet/signTypedData.d.ts
++++ b/_types/actions/wallet/signTypedData.d.ts
+@@ -117,7 +117,7 @@ export type SignTypedDataErrorType = AccountNotFoundErrorType | ParseAccountErro
+  *   },
+  * })
+  */
+-export declare function signTypedData<const TTypedData extends TypedData | {
++export declare function signTypedData<TTypedData extends TypedData | {
+     [key: string]: unknown;
+ }, TPrimaryType extends string, TChain extends Chain | undefined, TAccount extends Account | undefined>(client: Client<Transport, TChain, TAccount>, { account: account_, domain, message, primaryType, types: types_, }: SignTypedDataParameters<TTypedData, TPrimaryType, TAccount>): Promise<SignTypedDataReturnType>;
+ //# sourceMappingURL=signTypedData.d.ts.map
+\ No newline at end of file
+diff --git a/_types/actions/wallet/writeContract.d.ts b/_types/actions/wallet/writeContract.d.ts
+index fbfac745cad9c1a128c1e3b246c9577a0c804f3c..7ac77354b6196d6b6c3b521f13045178086b60e8 100644
+--- a/_types/actions/wallet/writeContract.d.ts
++++ b/_types/actions/wallet/writeContract.d.ts
+@@ -68,5 +68,5 @@ export type WriteContractErrorType = EncodeFunctionDataErrorType | SendTransacti
+  * }
+  * const hash = await writeContract(client, request)
+  */
+-export declare function writeContract<TChain extends Chain | undefined, TAccount extends Account | undefined, const TAbi extends Abi | readonly unknown[], TFunctionName extends string, TChainOverride extends Chain | undefined = undefined>(client: Client<Transport, TChain, TAccount>, { abi, address, args, dataSuffix, functionName, ...request }: WriteContractParameters<TAbi, TFunctionName, TChain, TAccount, TChainOverride>): Promise<WriteContractReturnType>;
++export declare function writeContract<TChain extends Chain | undefined, TAccount extends Account | undefined, TAbi extends Abi | readonly unknown[], TFunctionName extends string, TChainOverride extends Chain | undefined = undefined>(client: Client<Transport, TChain, TAccount>, { abi, address, args, dataSuffix, functionName, ...request }: WriteContractParameters<TAbi, TFunctionName, TChain, TAccount, TChainOverride>): Promise<WriteContractReturnType>;
+ //# sourceMappingURL=writeContract.d.ts.map
+\ No newline at end of file
+diff --git a/_types/clients/createClient.d.ts b/_types/clients/createClient.d.ts
+index 571e8b52ddec7bfb636c8dcae3b30cdf7fc1a7b7..33bb9b5e72c5997f567115815afd17973a4da569 100644
+--- a/_types/clients/createClient.d.ts
++++ b/_types/clients/createClient.d.ts
+@@ -40,7 +40,7 @@ export type ClientConfig<transport extends Transport = Transport, chain extends
+ };
+ type ExtendableProtectedActions = Pick<PublicActions, 'call' | 'createContractEventFilter' | 'createEventFilter' | 'estimateContractGas' | 'estimateGas' | 'getBlock' | 'getBlockNumber' | 'getChainId' | 'getContractEvents' | 'getEnsText' | 'getFilterChanges' | 'getGasPrice' | 'getLogs' | 'getTransaction' | 'getTransactionCount' | 'getTransactionReceipt' | 'prepareTransactionRequest' | 'readContract' | 'sendRawTransaction' | 'simulateContract' | 'uninstallFilter' | 'watchBlockNumber' | 'watchContractEvent'> & Pick<WalletActions, 'sendTransaction' | 'writeContract'>;
+ export type Client<transport extends Transport = Transport, chain extends Chain | undefined = Chain | undefined, account extends Account | undefined = Account | undefined, rpcSchema extends RpcSchema | undefined = undefined, extended extends Extended | undefined = Extended | undefined> = Client_Base<transport, chain, account, rpcSchema> & (extended extends Extended ? extended : unknown) & {
+-    extend: <const client extends Extended & Partial<ExtendableProtectedActions>>(fn: (client: Client<transport, chain, account, rpcSchema, extended>) => client) => Client<transport, chain, account, rpcSchema, Prettify<client> & (extended extends Extended ? extended : unknown)>;
++    extend: <client extends Extended & Partial<ExtendableProtectedActions>>(fn: (client: Client<transport, chain, account, rpcSchema, extended>) => client) => Client<transport, chain, account, rpcSchema, Prettify<client> & (extended extends Extended ? extended : unknown)>;
+ };
+ type Client_Base<transport extends Transport = Transport, chain extends Chain | undefined = Chain | undefined, account extends Account | undefined = Account | undefined, rpcSchema extends RpcSchema | undefined = undefined> = {
+     /** The Account of the Client. */
+diff --git a/_types/clients/decorators/public.d.ts b/_types/clients/decorators/public.d.ts
+index b211d19bc02d9221d23e602a11703c822c2cda31..44f3c0f8b2f0dfe7ea92bc39e478f0e5c2275aff 100644
+--- a/_types/clients/decorators/public.d.ts
++++ b/_types/clients/decorators/public.d.ts
+@@ -118,7 +118,7 @@ export type PublicActions<TTransport extends Transport = Transport, TChain exten
+      *   abi: parseAbi(['event Transfer(address indexed, address indexed, uint256)']),
+      * })
+      */
+-    createContractEventFilter: <const TAbi extends Abi | readonly unknown[], TEventName extends string | undefined, TArgs extends MaybeExtractEventArgsFromAbi<TAbi, TEventName> | undefined, TStrict extends boolean | undefined = undefined, TFromBlock extends BlockNumber | BlockTag | undefined = undefined, TToBlock extends BlockNumber | BlockTag | undefined = undefined>(args: CreateContractEventFilterParameters<TAbi, TEventName, TArgs, TStrict, TFromBlock, TToBlock>) => Promise<CreateContractEventFilterReturnType<TAbi, TEventName, TArgs, TStrict, TFromBlock, TToBlock>>;
++    createContractEventFilter: <TAbi extends Abi | readonly unknown[], TEventName extends string | undefined, TArgs extends MaybeExtractEventArgsFromAbi<TAbi, TEventName> | undefined, TStrict extends boolean | undefined = undefined, TFromBlock extends BlockNumber | BlockTag | undefined = undefined, TToBlock extends BlockNumber | BlockTag | undefined = undefined>(args: CreateContractEventFilterParameters<TAbi, TEventName, TArgs, TStrict, TFromBlock, TToBlock>) => Promise<CreateContractEventFilterReturnType<TAbi, TEventName, TArgs, TStrict, TFromBlock, TToBlock>>;
+     /**
+      * Creates a [`Filter`](https://viem.sh/docs/glossary/types.html#filter) to listen for new events that can be used with [`getFilterChanges`](https://viem.sh/docs/actions/public/getFilterChanges.html).
+      *
+@@ -140,7 +140,7 @@ export type PublicActions<TTransport extends Transport = Transport, TChain exten
+      *   address: '0xfba3912ca04dd458c843e2ee08967fc04f3579c2',
+      * })
+      */
+-    createEventFilter: <const TAbiEvent extends AbiEvent | undefined = undefined, const TAbiEvents extends readonly AbiEvent[] | readonly unknown[] | undefined = TAbiEvent extends AbiEvent ? [TAbiEvent] : undefined, TStrict extends boolean | undefined = undefined, TFromBlock extends BlockNumber | BlockTag | undefined = undefined, TToBlock extends BlockNumber | BlockTag | undefined = undefined, _EventName extends string | undefined = MaybeAbiEventName<TAbiEvent>, _Args extends MaybeExtractEventArgsFromAbi<TAbiEvents, _EventName> | undefined = undefined>(args?: CreateEventFilterParameters<TAbiEvent, TAbiEvents, TStrict, TFromBlock, TToBlock, _EventName, _Args>) => Promise<CreateEventFilterReturnType<TAbiEvent, TAbiEvents, TStrict, TFromBlock, TToBlock, _EventName, _Args>>;
++    createEventFilter: <TAbiEvent extends AbiEvent | undefined = undefined, TAbiEvents extends readonly AbiEvent[] | readonly unknown[] | undefined = TAbiEvent extends AbiEvent ? [TAbiEvent] : undefined, TStrict extends boolean | undefined = undefined, TFromBlock extends BlockNumber | BlockTag | undefined = undefined, TToBlock extends BlockNumber | BlockTag | undefined = undefined, _EventName extends string | undefined = MaybeAbiEventName<TAbiEvent>, _Args extends MaybeExtractEventArgsFromAbi<TAbiEvents, _EventName> | undefined = undefined>(args?: CreateEventFilterParameters<TAbiEvent, TAbiEvents, TStrict, TFromBlock, TToBlock, _EventName, _Args>) => Promise<CreateEventFilterReturnType<TAbiEvent, TAbiEvents, TStrict, TFromBlock, TToBlock, _EventName, _Args>>;
+     /**
+      * Creates a Filter to listen for new pending transaction hashes that can be used with [`getFilterChanges`](https://viem.sh/docs/actions/public/getFilterChanges.html).
+      *
+@@ -187,7 +187,7 @@ export type PublicActions<TTransport extends Transport = Transport, TChain exten
+      *   account: '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266',
+      * })
+      */
+-    estimateContractGas: <TChain extends Chain | undefined, const TAbi extends Abi | readonly unknown[], TFunctionName extends string>(args: EstimateContractGasParameters<TAbi, TFunctionName, TChain, TAccount>) => Promise<EstimateContractGasReturnType>;
++    estimateContractGas: <TChain extends Chain | undefined, TAbi extends Abi | readonly unknown[], TFunctionName extends string>(args: EstimateContractGasParameters<TAbi, TFunctionName, TChain, TAccount>) => Promise<EstimateContractGasReturnType>;
+     /**
+      * Estimates the gas necessary to complete a transaction without submitting it to the network.
+      *
+@@ -381,7 +381,7 @@ export type PublicActions<TTransport extends Transport = Transport, TChain exten
+      *  eventName: 'Transfer'
+      * })
+      */
+-    getContractEvents: <const TAbi extends Abi | readonly unknown[], TEventName extends string | undefined = undefined, TStrict extends boolean | undefined = undefined, TFromBlock extends BlockNumber | BlockTag | undefined = undefined, TToBlock extends BlockNumber | BlockTag | undefined = undefined>(args: GetContractEventsParameters<TAbi, TEventName, TStrict, TFromBlock, TToBlock>) => Promise<GetContractEventsReturnType<TAbi, TEventName, TStrict, TFromBlock, TToBlock>>;
++    getContractEvents: <TAbi extends Abi | readonly unknown[], TEventName extends string | undefined = undefined, TStrict extends boolean | undefined = undefined, TFromBlock extends BlockNumber | BlockTag | undefined = undefined, TToBlock extends BlockNumber | BlockTag | undefined = undefined>(args: GetContractEventsParameters<TAbi, TEventName, TStrict, TFromBlock, TToBlock>) => Promise<GetContractEventsReturnType<TAbi, TEventName, TStrict, TFromBlock, TToBlock>>;
+     /**
+      * Gets address for ENS name.
+      *
+@@ -648,7 +648,7 @@ export type PublicActions<TTransport extends Transport = Transport, TChain exten
+      * const filter = await client.createPendingTransactionFilter()
+      * const hashes = await client.getFilterChanges({ filter })
+      */
+-    getFilterChanges: <TFilterType extends FilterType, const TAbi extends Abi | readonly unknown[] | undefined, TEventName extends string | undefined, TStrict extends boolean | undefined = undefined, TFromBlock extends BlockNumber | BlockTag | undefined = undefined, TToBlock extends BlockNumber | BlockTag | undefined = undefined>(args: GetFilterChangesParameters<TFilterType, TAbi, TEventName, TStrict, TFromBlock, TToBlock>) => Promise<GetFilterChangesReturnType<TFilterType, TAbi, TEventName, TStrict, TFromBlock, TToBlock>>;
++    getFilterChanges: <TFilterType extends FilterType, TAbi extends Abi | readonly unknown[] | undefined, TEventName extends string | undefined, TStrict extends boolean | undefined = undefined, TFromBlock extends BlockNumber | BlockTag | undefined = undefined, TToBlock extends BlockNumber | BlockTag | undefined = undefined>(args: GetFilterChangesParameters<TFilterType, TAbi, TEventName, TStrict, TFromBlock, TToBlock>) => Promise<GetFilterChangesReturnType<TFilterType, TAbi, TEventName, TStrict, TFromBlock, TToBlock>>;
+     /**
+      * Returns a list of event logs since the filter was created.
+      *
+@@ -675,7 +675,7 @@ export type PublicActions<TTransport extends Transport = Transport, TChain exten
+      * })
+      * const logs = await client.getFilterLogs({ filter })
+      */
+-    getFilterLogs: <const TAbi extends Abi | readonly unknown[] | undefined, TEventName extends string | undefined, TStrict extends boolean | undefined = undefined, TFromBlock extends BlockNumber | BlockTag | undefined = undefined, TToBlock extends BlockNumber | BlockTag | undefined = undefined>(args: GetFilterLogsParameters<TAbi, TEventName, TStrict, TFromBlock, TToBlock>) => Promise<GetFilterLogsReturnType<TAbi, TEventName, TStrict, TFromBlock, TToBlock>>;
++    getFilterLogs: <TAbi extends Abi | readonly unknown[] | undefined, TEventName extends string | undefined, TStrict extends boolean | undefined = undefined, TFromBlock extends BlockNumber | BlockTag | undefined = undefined, TToBlock extends BlockNumber | BlockTag | undefined = undefined>(args: GetFilterLogsParameters<TAbi, TEventName, TStrict, TFromBlock, TToBlock>) => Promise<GetFilterLogsReturnType<TAbi, TEventName, TStrict, TFromBlock, TToBlock>>;
+     /**
+      * Returns the current price of gas (in wei).
+      *
+@@ -715,7 +715,7 @@ export type PublicActions<TTransport extends Transport = Transport, TChain exten
+      * })
+      * const logs = await client.getLogs()
+      */
+-    getLogs: <const TAbiEvent extends AbiEvent | undefined = undefined, const TAbiEvents extends readonly AbiEvent[] | readonly unknown[] | undefined = TAbiEvent extends AbiEvent ? [TAbiEvent] : undefined, TStrict extends boolean | undefined = undefined, TFromBlock extends BlockNumber | BlockTag | undefined = undefined, TToBlock extends BlockNumber | BlockTag | undefined = undefined>(args?: GetLogsParameters<TAbiEvent, TAbiEvents, TStrict, TFromBlock, TToBlock>) => Promise<GetLogsReturnType<TAbiEvent, TAbiEvents, TStrict, TFromBlock, TToBlock>>;
++    getLogs: <TAbiEvent extends AbiEvent | undefined = undefined, TAbiEvents extends readonly AbiEvent[] | readonly unknown[] | undefined = TAbiEvent extends AbiEvent ? [TAbiEvent] : undefined, TStrict extends boolean | undefined = undefined, TFromBlock extends BlockNumber | BlockTag | undefined = undefined, TToBlock extends BlockNumber | BlockTag | undefined = undefined>(args?: GetLogsParameters<TAbiEvent, TAbiEvents, TStrict, TFromBlock, TToBlock>) => Promise<GetLogsReturnType<TAbiEvent, TAbiEvents, TStrict, TFromBlock, TToBlock>>;
+     /**
+      * Returns the account and storage values of the specified account including the Merkle-proof.
+      *
+@@ -985,7 +985,7 @@ export type PublicActions<TTransport extends Transport = Transport, TChain exten
+      * })
+      * // 424122n
+      */
+-    readContract: <const TAbi extends Abi | readonly unknown[], TFunctionName extends string>(args: ReadContractParameters<TAbi, TFunctionName>) => Promise<ReadContractReturnType<TAbi, TFunctionName>>;
++    readContract: <TAbi extends Abi | readonly unknown[], TFunctionName extends string>(args: ReadContractParameters<TAbi, TFunctionName>) => Promise<ReadContractReturnType<TAbi, TFunctionName>>;
+     /**
+      * Sends a **signed** transaction to the network
+      *
+@@ -1041,7 +1041,7 @@ export type PublicActions<TTransport extends Transport = Transport, TChain exten
+      *   account: '0xA0Cf798816D4b9b9866b5330EEa46a18382f251e',
+      * })
+      */
+-    simulateContract: <const TAbi extends Abi | readonly unknown[], TFunctionName extends string, TChainOverride extends Chain | undefined = undefined>(args: SimulateContractParameters<TAbi, TFunctionName, TChain, TChainOverride>) => Promise<SimulateContractReturnType<TAbi, TFunctionName, TChain, TChainOverride>>;
++    simulateContract: <TAbi extends Abi | readonly unknown[], TFunctionName extends string, TChainOverride extends Chain | undefined = undefined>(args: SimulateContractParameters<TAbi, TFunctionName, TChain, TChainOverride>) => Promise<SimulateContractReturnType<TAbi, TFunctionName, TChain, TChainOverride>>;
+     verifyMessage: (args: VerifyMessageParameters) => Promise<VerifyMessageReturnType>;
+     verifyTypedData: (args: VerifyTypedDataParameters) => Promise<VerifyTypedDataReturnType>;
+     /**
+@@ -1185,7 +1185,7 @@ export type PublicActions<TTransport extends Transport = Transport, TChain exten
+      *   onLogs: (logs) => console.log(logs),
+      * })
+      */
+-    watchContractEvent: <const TAbi extends Abi | readonly unknown[], TEventName extends string, TStrict extends boolean | undefined = undefined>(args: WatchContractEventParameters<TAbi, TEventName, TStrict>) => WatchContractEventReturnType;
++    watchContractEvent: <TAbi extends Abi | readonly unknown[], TEventName extends string, TStrict extends boolean | undefined = undefined>(args: WatchContractEventParameters<TAbi, TEventName, TStrict>) => WatchContractEventReturnType;
+     /**
+      * Watches and returns emitted [Event Logs](https://viem.sh/docs/glossary/terms.html#event-log).
+      *
+@@ -1217,7 +1217,7 @@ export type PublicActions<TTransport extends Transport = Transport, TChain exten
+      *   onLogs: (logs) => console.log(logs),
+      * })
+      */
+-    watchEvent: <const TAbiEvent extends AbiEvent | undefined = undefined, const TAbiEvents extends readonly AbiEvent[] | readonly unknown[] | undefined = TAbiEvent extends AbiEvent ? [TAbiEvent] : undefined, TStrict extends boolean | undefined = undefined>(args: WatchEventParameters<TAbiEvent, TAbiEvents, TStrict>) => WatchEventReturnType;
++    watchEvent: <TAbiEvent extends AbiEvent | undefined = undefined, TAbiEvents extends readonly AbiEvent[] | readonly unknown[] | undefined = TAbiEvent extends AbiEvent ? [TAbiEvent] : undefined, TStrict extends boolean | undefined = undefined>(args: WatchEventParameters<TAbiEvent, TAbiEvents, TStrict>) => WatchEventReturnType;
+     /**
+      * Watches and returns pending transaction hashes.
+      *
+diff --git a/_types/clients/decorators/wallet.d.ts b/_types/clients/decorators/wallet.d.ts
+index c7616bc18075f994ba2ee15a80348c771c09a1c9..e5a0fb78d0811984f6ff7192f0940a5ed5ff1657 100644
+--- a/_types/clients/decorators/wallet.d.ts
++++ b/_types/clients/decorators/wallet.d.ts
+@@ -63,7 +63,7 @@ export type WalletActions<TChain extends Chain | undefined = Chain | undefined,
+      *   bytecode: '0x608060405260405161083e38038061083e833981016040819052610...',
+      * })
+      */
+-    deployContract: <const TAbi extends Abi | readonly unknown[], TChainOverride extends Chain | undefined = undefined>(args: DeployContractParameters<TAbi, TChain, TAccount, TChainOverride>) => Promise<DeployContractReturnType>;
++    deployContract: <TAbi extends Abi | readonly unknown[], TChainOverride extends Chain | undefined = undefined>(args: DeployContractParameters<TAbi, TChain, TAccount, TChainOverride>) => Promise<DeployContractReturnType>;
+     /**
+      * Returns a list of account addresses owned by the wallet or client.
+      *
+@@ -458,7 +458,7 @@ export type WalletActions<TChain extends Chain | undefined = Chain | undefined,
+      *   },
+      * })
+      */
+-    signTypedData: <const TTypedData extends TypedData | {
++    signTypedData: <TTypedData extends TypedData | {
+         [key: string]: unknown;
+     }, TPrimaryType extends string>(args: SignTypedDataParameters<TTypedData, TPrimaryType, TAccount>) => Promise<SignTypedDataReturnType>;
+     /**
+@@ -554,7 +554,7 @@ export type WalletActions<TChain extends Chain | undefined = Chain | undefined,
+      * }
+      * const hash = await client.writeContract(request)
+      */
+-    writeContract: <const TAbi extends Abi | readonly unknown[], TFunctionName extends string, TChainOverride extends Chain | undefined = undefined>(args: WriteContractParameters<TAbi, TFunctionName, TChain, TAccount, TChainOverride>) => Promise<WriteContractReturnType>;
++    writeContract: <TAbi extends Abi | readonly unknown[], TFunctionName extends string, TChainOverride extends Chain | undefined = undefined>(args: WriteContractParameters<TAbi, TFunctionName, TChain, TAccount, TChainOverride>) => Promise<WriteContractReturnType>;
+ };
+ export declare function walletActions<TTransport extends Transport, TChain extends Chain | undefined = Chain | undefined, TAccount extends Account | undefined = Account | undefined>(client: Client<TTransport, TChain, TAccount>): WalletActions<TChain, TAccount>;
+ //# sourceMappingURL=wallet.d.ts.map
+\ No newline at end of file
+diff --git a/_types/utils/abi/decodeAbiParameters.d.ts b/_types/utils/abi/decodeAbiParameters.d.ts
+index 6dbb6beb066e909a9c3f3c6ea8d3b6e32d506c90..9b6cb922872d54516c730b0efaec24a63c68410d 100644
+--- a/_types/utils/abi/decodeAbiParameters.d.ts
++++ b/_types/utils/abi/decodeAbiParameters.d.ts
+@@ -10,7 +10,7 @@ import type { ErrorType } from '../../errors/utils.js';
+ import { type GetArrayComponentsErrorType } from './encodeAbiParameters.js';
+ export type DecodeAbiParametersReturnType<TParams extends readonly AbiParameter[] | readonly unknown[] = readonly AbiParameter[]> = AbiParametersToPrimitiveTypes<TParams extends readonly AbiParameter[] ? TParams : AbiParameter[]>;
+ export type DecodeAbiParametersErrorType = AbiDecodingDataSizeTooSmallErrorType | AbiDecodingZeroDataErrorType | DecodeParamsErrorType | SizeErrorType | ErrorType;
+-export declare function decodeAbiParameters<const TParams extends readonly AbiParameter[] | readonly unknown[]>(params: TParams, data: Hex): DecodeAbiParametersReturnType<TParams>;
++export declare function decodeAbiParameters<TParams extends readonly AbiParameter[] | readonly unknown[]>(params: TParams, data: Hex): DecodeAbiParametersReturnType<TParams>;
+ type DecodeParamsErrorType = DecodeParamErrorType | SizeErrorType | ErrorType;
+ type DecodeParamErrorType = DecodeArrayErrorType | DecodeTupleErrorType | DecodeStringErrorType | DecodeBytesErrorType | DecodeNumberErrorType | DecodeAddressErrorType | DecodeBoolErrorType | InvalidAbiDecodingTypeErrorType | ErrorType;
+ type DecodeAddressErrorType = ChecksumAddressErrorType | SliceErrorType | ErrorType;
+diff --git a/_types/utils/abi/decodeDeployData.d.ts b/_types/utils/abi/decodeDeployData.d.ts
+index e145232ce3efcc341a7ec092594561c45a1cd188..f92155fe98efc23ae64a1bc1d39a27db89e9fc68 100644
+--- a/_types/utils/abi/decodeDeployData.d.ts
++++ b/_types/utils/abi/decodeDeployData.d.ts
+@@ -13,5 +13,5 @@ export type DecodeDeployDataReturnType<TAbi extends Abi | readonly unknown[] = A
+     bytecode: Hex;
+ } & GetConstructorArgs<TAbi>;
+ export type DecodeDeployDataErrorType = AbiConstructorNotFoundErrorType | AbiConstructorParamsNotFoundErrorType | DecodeAbiParametersErrorType | ErrorType;
+-export declare function decodeDeployData<const TAbi extends Abi | readonly unknown[]>({ abi, bytecode, data, }: DecodeDeployDataParameters<TAbi>): DecodeDeployDataReturnType<TAbi>;
++export declare function decodeDeployData<TAbi extends Abi | readonly unknown[]>({ abi, bytecode, data, }: DecodeDeployDataParameters<TAbi>): DecodeDeployDataReturnType<TAbi>;
+ //# sourceMappingURL=decodeDeployData.d.ts.map
+\ No newline at end of file
+diff --git a/_types/utils/abi/decodeErrorResult.d.ts b/_types/utils/abi/decodeErrorResult.d.ts
+index 0b4061e1f0d06754bed48d8050c610524c0d8c66..ccaf93b9739f8f60c01df2099d38f7dd462a0a20 100644
+--- a/_types/utils/abi/decodeErrorResult.d.ts
++++ b/_types/utils/abi/decodeErrorResult.d.ts
+@@ -18,5 +18,5 @@ export type DecodeErrorResultReturnType<TAbi extends Abi | readonly unknown[] =
+     };
+ }[_ErrorNames];
+ export type DecodeErrorResultErrorType = AbiDecodingZeroDataErrorType | AbiErrorSignatureNotFoundErrorType | DecodeAbiParametersErrorType | FormatAbiItemErrorType | GetFunctionSelectorErrorType | ErrorType;
+-export declare function decodeErrorResult<const TAbi extends Abi | readonly unknown[]>({ abi, data, }: DecodeErrorResultParameters<TAbi>): DecodeErrorResultReturnType<TAbi>;
++export declare function decodeErrorResult<TAbi extends Abi | readonly unknown[]>({ abi, data, }: DecodeErrorResultParameters<TAbi>): DecodeErrorResultReturnType<TAbi>;
+ //# sourceMappingURL=decodeErrorResult.d.ts.map
+\ No newline at end of file
+diff --git a/_types/utils/abi/decodeEventLog.d.ts b/_types/utils/abi/decodeEventLog.d.ts
+index 35c0865ded1db49fa99a728a5397c4c6897e6686..e4388a600aeb4777d4d4f15bd141825bd6def529 100644
+--- a/_types/utils/abi/decodeEventLog.d.ts
++++ b/_types/utils/abi/decodeEventLog.d.ts
+@@ -22,5 +22,5 @@ export type DecodeEventLogReturnType<TAbi extends Abi | readonly unknown[] = Abi
+     } & GetEventArgsFromTopics<TAbi, TName, TTopics, TData, TStrict>>;
+ }[_EventNames];
+ export type DecodeEventLogErrorType = AbiDecodingDataSizeTooSmallErrorType | AbiEventSignatureEmptyTopicsErrorType | AbiEventSignatureNotFoundErrorType | DecodeAbiParametersErrorType | DecodeLogTopicsMismatchErrorType | DecodeLogDataMismatchErrorType | FormatAbiItemErrorType | GetEventSelectorErrorType | ErrorType;
+-export declare function decodeEventLog<const TAbi extends Abi | readonly unknown[], TEventName extends string | undefined = undefined, TTopics extends Hex[] = Hex[], TData extends Hex | undefined = undefined, TStrict extends boolean = true>({ abi, data, strict: strict_, topics, }: DecodeEventLogParameters<TAbi, TEventName, TTopics, TData, TStrict>): DecodeEventLogReturnType<TAbi, TEventName, TTopics, TData, TStrict>;
++export declare function decodeEventLog<TAbi extends Abi | readonly unknown[], TEventName extends string | undefined = undefined, TTopics extends Hex[] = Hex[], TData extends Hex | undefined = undefined, TStrict extends boolean = true>({ abi, data, strict: strict_, topics, }: DecodeEventLogParameters<TAbi, TEventName, TTopics, TData, TStrict>): DecodeEventLogReturnType<TAbi, TEventName, TTopics, TData, TStrict>;
+ //# sourceMappingURL=decodeEventLog.d.ts.map
+\ No newline at end of file
+diff --git a/_types/utils/abi/decodeFunctionResult.d.ts b/_types/utils/abi/decodeFunctionResult.d.ts
+index b0112d52eaef80c41aa850cbdf8fe8a34b2b19b2..faecdd5d1a04938e55994afa9a4e836f853ac8db 100644
+--- a/_types/utils/abi/decodeFunctionResult.d.ts
++++ b/_types/utils/abi/decodeFunctionResult.d.ts
+@@ -15,5 +15,5 @@ export type DecodeFunctionResultParameters<TAbi extends Abi | readonly unknown[]
+ } & Partial<GetFunctionArgs<TAbi, _FunctionName>> : never);
+ export type DecodeFunctionResultReturnType<TAbi extends Abi | readonly unknown[] = Abi, TFunctionName extends string | undefined = string, _FunctionName extends string = TAbi extends Abi ? Abi extends TAbi ? string : ExtractAbiFunctionNames<TAbi>[number] : string> = TFunctionName extends string ? ContractFunctionResult<TAbi, TFunctionName> : ContractFunctionResult<TAbi, _FunctionName>;
+ export type DecodeFunctionResultErrorType = AbiFunctionNotFoundErrorType | AbiFunctionOutputsNotFoundErrorType | DecodeAbiParametersErrorType | GetAbiItemErrorType | ErrorType;
+-export declare function decodeFunctionResult<const TAbi extends Abi | readonly unknown[], TFunctionName extends string | undefined = undefined>({ abi, args, functionName, data, }: DecodeFunctionResultParameters<TAbi, TFunctionName>): DecodeFunctionResultReturnType<TAbi, TFunctionName>;
++export declare function decodeFunctionResult<TAbi extends Abi | readonly unknown[], TFunctionName extends string | undefined = undefined>({ abi, args, functionName, data, }: DecodeFunctionResultParameters<TAbi, TFunctionName>): DecodeFunctionResultReturnType<TAbi, TFunctionName>;
+ //# sourceMappingURL=decodeFunctionResult.d.ts.map
+\ No newline at end of file
+diff --git a/_types/utils/abi/encodeAbiParameters.d.ts b/_types/utils/abi/encodeAbiParameters.d.ts
+index ed911e4ea44b2ace042508a18405a336b8457425..b30f0059dba50845c46289b233c36ef075074b8c 100644
+--- a/_types/utils/abi/encodeAbiParameters.d.ts
++++ b/_types/utils/abi/encodeAbiParameters.d.ts
+@@ -14,7 +14,7 @@ export type EncodeAbiParametersErrorType = AbiEncodingLengthMismatchErrorType |
+ /**
+  * @description Encodes a list of primitive values into an ABI-encoded hex value.
+  */
+-export declare function encodeAbiParameters<const TParams extends readonly AbiParameter[] | readonly unknown[]>(params: TParams, values: TParams extends readonly AbiParameter[] ? AbiParametersToPrimitiveTypes<TParams> : never): EncodeAbiParametersReturnType;
++export declare function encodeAbiParameters<TParams extends readonly AbiParameter[] | readonly unknown[]>(params: TParams, values: TParams extends readonly AbiParameter[] ? AbiParametersToPrimitiveTypes<TParams> : never): EncodeAbiParametersReturnType;
+ export type PrepareParamsErrorType = ErrorType;
+ export type PrepareParamErrorType = GetArrayComponentsErrorType | InvalidAbiEncodingTypeErrorType | ErrorType;
+ export type EncodeParamsErrorType = NumberToHexErrorType | SizeErrorType | ErrorType;
+diff --git a/_types/utils/abi/encodeDeployData.d.ts b/_types/utils/abi/encodeDeployData.d.ts
+index 298e9b9ed5dafa4f6e3c09ae4b32f65cc95d7606..a5100f9a531dcf1ce6105db00c913826306bbe85 100644
+--- a/_types/utils/abi/encodeDeployData.d.ts
++++ b/_types/utils/abi/encodeDeployData.d.ts
+@@ -10,5 +10,5 @@ export type EncodeDeployDataParameters<TAbi extends Abi | readonly unknown[] = A
+     bytecode: Hex;
+ } & GetConstructorArgs<TAbi>;
+ export type EncodeDeployDataErrorType = AbiConstructorNotFoundErrorType | ConcatHexErrorType | EncodeAbiParametersErrorType | ErrorType;
+-export declare function encodeDeployData<const TAbi extends Abi | readonly unknown[]>({ abi, args, bytecode, }: EncodeDeployDataParameters<TAbi>): `0x${string}`;
++export declare function encodeDeployData<TAbi extends Abi | readonly unknown[]>({ abi, args, bytecode, }: EncodeDeployDataParameters<TAbi>): `0x${string}`;
+ //# sourceMappingURL=encodeDeployData.d.ts.map
+\ No newline at end of file
+diff --git a/_types/utils/abi/encodeErrorResult.d.ts b/_types/utils/abi/encodeErrorResult.d.ts
+index 2bdcfe3f81af60d0396af3f2b67f20e7dc9681ff..b3768b9b21f307ee96ad29218005fd81ea2b6add 100644
+--- a/_types/utils/abi/encodeErrorResult.d.ts
++++ b/_types/utils/abi/encodeErrorResult.d.ts
+@@ -14,5 +14,5 @@ export type EncodeErrorResultParameters<TAbi extends Abi | readonly unknown[] =
+     abi: [TAbi[number]];
+ } & GetErrorArgs<TAbi, _ErrorName> : never);
+ export type EncodeErrorResultErrorType = GetAbiItemErrorType | FormatAbiItemErrorType | GetFunctionSelectorErrorType | EncodeAbiParametersErrorType | ConcatHexErrorType | ErrorType;
+-export declare function encodeErrorResult<const TAbi extends Abi | readonly unknown[], TErrorName extends string | undefined = undefined>({ abi, errorName, args }: EncodeErrorResultParameters<TAbi, TErrorName>): `0x${string}`;
++export declare function encodeErrorResult<TAbi extends Abi | readonly unknown[], TErrorName extends string | undefined = undefined>({ abi, errorName, args }: EncodeErrorResultParameters<TAbi, TErrorName>): `0x${string}`;
+ //# sourceMappingURL=encodeErrorResult.d.ts.map
+\ No newline at end of file
+diff --git a/_types/utils/abi/encodeEventTopics.d.ts b/_types/utils/abi/encodeEventTopics.d.ts
+index 72506af99353f46ce896f8db26bedf86f533dee0..c682e37ba5beaad648f92dc6fefbe6fa7d3cab02 100644
+--- a/_types/utils/abi/encodeEventTopics.d.ts
++++ b/_types/utils/abi/encodeEventTopics.d.ts
+@@ -18,6 +18,6 @@ export type EncodeEventTopicsParameters<TAbi extends Abi | readonly unknown[] =
+     args?: GetEventArgs<TAbi, _EventName>;
+ } : never);
+ export type EncodeEventTopicsErrorType = AbiEventNotFoundErrorType | EncodeArgErrorType | FormatAbiItemErrorType | GetEventSelectorErrorType | ErrorType;
+-export declare function encodeEventTopics<const TAbi extends Abi | readonly unknown[], TEventName extends string | undefined = undefined>({ abi, eventName, args }: EncodeEventTopicsParameters<TAbi, TEventName>): `0x${string}`[];
++export declare function encodeEventTopics<TAbi extends Abi | readonly unknown[], TEventName extends string | undefined = undefined>({ abi, eventName, args }: EncodeEventTopicsParameters<TAbi, TEventName>): `0x${string}`[];
+ export type EncodeArgErrorType = Keccak256ErrorType | ToBytesErrorType | EncodeAbiParametersErrorType | FilterTypeNotSupportedErrorType | ErrorType;
+ //# sourceMappingURL=encodeEventTopics.d.ts.map
+\ No newline at end of file
+diff --git a/_types/utils/abi/encodeFunctionData.d.ts b/_types/utils/abi/encodeFunctionData.d.ts
+index d6b02de8a19025cce3cda2b36e8415f03acbe658..0a2809ec6315bd723a560431b8561c5aed2c310b 100644
+--- a/_types/utils/abi/encodeFunctionData.d.ts
++++ b/_types/utils/abi/encodeFunctionData.d.ts
+@@ -15,5 +15,5 @@ export type EncodeFunctionDataParameters<TAbi extends Abi | readonly unknown[] =
+     abi: [TAbi[number]];
+ } & GetFunctionArgs<TAbi, _FunctionName> : never);
+ export type EncodeFunctionDataErrorType = AbiFunctionNotFoundErrorType | ConcatHexErrorType | EncodeAbiParametersErrorType | FormatAbiItemErrorType | GetAbiItemErrorType | GetFunctionSelectorErrorType | ErrorType;
+-export declare function encodeFunctionData<const TAbi extends Abi | readonly unknown[], TFunctionName extends string | undefined = undefined>({ abi, args, functionName, }: EncodeFunctionDataParameters<TAbi, TFunctionName>): `0x${string}`;
++export declare function encodeFunctionData<TAbi extends Abi | readonly unknown[], TFunctionName extends string | undefined = undefined>({ abi, args, functionName, }: EncodeFunctionDataParameters<TAbi, TFunctionName>): `0x${string}`;
+ //# sourceMappingURL=encodeFunctionData.d.ts.map
+\ No newline at end of file
+diff --git a/_types/utils/abi/encodeFunctionResult.d.ts b/_types/utils/abi/encodeFunctionResult.d.ts
+index 2dfe452de1728ea3c5264a35bcf85782d7eff3c0..61c85109b680dd7b91f9b7816883ddd6c1b6f5a4 100644
+--- a/_types/utils/abi/encodeFunctionResult.d.ts
++++ b/_types/utils/abi/encodeFunctionResult.d.ts
+@@ -14,5 +14,5 @@ export type EncodeFunctionResultParameters<TAbi extends Abi | readonly unknown[]
+     result?: ContractFunctionResult<TAbi, _FunctionName>;
+ } : never);
+ export type EncodeFunctionResultErrorType = AbiFunctionOutputsNotFoundError | AbiFunctionNotFoundError | EncodeAbiParametersErrorType | GetAbiItemErrorType | ErrorType;
+-export declare function encodeFunctionResult<const TAbi extends Abi | readonly unknown[], TFunctionName extends string | undefined = undefined>({ abi, functionName, result, }: EncodeFunctionResultParameters<TAbi, TFunctionName>): `0x${string}`;
++export declare function encodeFunctionResult<TAbi extends Abi | readonly unknown[], TFunctionName extends string | undefined = undefined>({ abi, functionName, result, }: EncodeFunctionResultParameters<TAbi, TFunctionName>): `0x${string}`;
+ //# sourceMappingURL=encodeFunctionResult.d.ts.map
+\ No newline at end of file
+diff --git a/_types/utils/abi/encodePacked.d.ts b/_types/utils/abi/encodePacked.d.ts
+index e7b655ef000f909cb756f3cde3b4ac886527a94e..210ad347e3b464d79ceb3c693abce38d6ef586b1 100644
+--- a/_types/utils/abi/encodePacked.d.ts
++++ b/_types/utils/abi/encodePacked.d.ts
+@@ -14,7 +14,7 @@ type EncodePackedValues<TPackedAbiTypes extends readonly PackedAbiType[] | reado
+     }> : unknown;
+ };
+ export type EncodePackedErrorType = AbiEncodingLengthMismatchErrorType | ConcatHexErrorType | EncodeErrorType | ErrorType;
+-export declare function encodePacked<const TPackedAbiTypes extends readonly PackedAbiType[] | readonly unknown[]>(types: TPackedAbiTypes, values: EncodePackedValues<TPackedAbiTypes>): Hex;
++export declare function encodePacked<TPackedAbiTypes extends readonly PackedAbiType[] | readonly unknown[]>(types: TPackedAbiTypes, values: EncodePackedValues<TPackedAbiTypes>): Hex;
+ type EncodeErrorType = BoolToHexErrorType | BytesSizeMismatchErrorType | InvalidAddressErrorType | IsAddressErrorType | NumberToHexErrorType | PadErrorType | StringToHexErrorType | UnsupportedPackedAbiType | ErrorType;
+ export {};
+ //# sourceMappingURL=encodePacked.d.ts.map
+\ No newline at end of file
+diff --git a/_types/utils/abi/getAbiItem.d.ts b/_types/utils/abi/getAbiItem.d.ts
+index ab5de672346b275684788ab2fc66739b82f974e0..29c46ba53abc7ede6627c7ae8bfc8b3f8d77d1c2 100644
+--- a/_types/utils/abi/getAbiItem.d.ts
++++ b/_types/utils/abi/getAbiItem.d.ts
+@@ -13,7 +13,7 @@ export type GetAbiItemReturnType<TAbi extends Abi | readonly unknown[] = Abi, TI
+     name: TItemName;
+ }>;
+ export type GetAbiItemErrorType = IsArgOfTypeErrorType | IsHexErrorType | GetFunctionSelectorErrorType | ErrorType;
+-export declare function getAbiItem<const TAbi extends Abi | readonly unknown[], TItemName extends string>({ abi, args, name, }: GetAbiItemParameters<TAbi, TItemName>): GetAbiItemReturnType<TAbi, TItemName>;
++export declare function getAbiItem<TAbi extends Abi | readonly unknown[], TItemName extends string>({ abi, args, name, }: GetAbiItemParameters<TAbi, TItemName>): GetAbiItemReturnType<TAbi, TItemName>;
+ export type IsArgOfTypeErrorType = IsAddressErrorType | ErrorType;
+ export declare function isArgOfType(arg: unknown, abiParameter: AbiParameter): boolean;
+ export declare function getAmbiguousTypes(sourceParameters: readonly AbiParameter[], targetParameters: readonly AbiParameter[], args: readonly unknown[]): AbiParameter['type'][] | undefined;
+diff --git a/_types/utils/chain/defineChain.d.ts b/_types/utils/chain/defineChain.d.ts
+index a54d0dfc3f28ca2a8bf7b2e9822d2fc245713471..c42d7b0ea22001b370a60d7b6d5a611307f74a28 100644
+--- a/_types/utils/chain/defineChain.d.ts
++++ b/_types/utils/chain/defineChain.d.ts
+@@ -1,4 +1,4 @@
+ import type { Chain, ChainConfig, ChainFormatters } from '../../types/chain.js';
+ import type { Assign } from '../../types/utils.js';
+-export declare function defineChain<const chain extends Chain, formatters extends ChainFormatters | undefined = undefined>(chain: chain, config?: ChainConfig<formatters>): Assign<chain, ChainConfig<formatters>>;
++export declare function defineChain<chain extends Chain, formatters extends ChainFormatters | undefined = undefined>(chain: chain, config?: ChainConfig<formatters>): Assign<chain, ChainConfig<formatters>>;
+ //# sourceMappingURL=defineChain.d.ts.map
+\ No newline at end of file
+diff --git a/_types/utils/chain/extractChain.d.ts b/_types/utils/chain/extractChain.d.ts
+index c0ee3605c3a4df4d35e955c75f0a1c59b4045031..f08ebce5033afb38a1649918332d811a44759b2b 100644
+--- a/_types/utils/chain/extractChain.d.ts
++++ b/_types/utils/chain/extractChain.d.ts
+@@ -6,5 +6,5 @@ export type ExtractChainParameters<chains extends readonly Chain[], chainId exte
+ };
+ export type ExtractChainReturnType<chains extends readonly Chain[], chainId extends chains[number]['id']> = ExtractChain<chains, chainId>;
+ export type ExtractChainErrorType = ErrorType;
+-export declare function extractChain<const chains extends readonly Chain[], chainId extends chains[number]['id']>({ chains, id, }: ExtractChainParameters<chains, chainId>): ExtractChainReturnType<chains, chainId>;
++export declare function extractChain<chains extends readonly Chain[], chainId extends chains[number]['id']>({ chains, id, }: ExtractChainParameters<chains, chainId>): ExtractChainReturnType<chains, chainId>;
+ //# sourceMappingURL=extractChain.d.ts.map
+\ No newline at end of file
+diff --git a/_types/utils/signature/hashTypedData.d.ts b/_types/utils/signature/hashTypedData.d.ts
+index 966efda65fe5ca55635315decff6fb932d1cf333..9898e2dbf49c9ce4344907219afa7a6af14214da 100644
+--- a/_types/utils/signature/hashTypedData.d.ts
++++ b/_types/utils/signature/hashTypedData.d.ts
+@@ -15,7 +15,7 @@ export type HashTypedDataParameters<TTypedData extends TypedData | {
+ } = TypedData, TPrimaryType extends string = string> = TypedDataDefinition<TTypedData, TPrimaryType>;
+ export type HashTypedDataReturnType = Hex;
+ export type HashTypedDataErrorType = GetTypesForEIP712DomainErrorType | HashDomainErrorType | HashStructErrorType | ValidateTypedDataErrorType | ErrorType;
+-export declare function hashTypedData<const TTypedData extends TypedData | {
++export declare function hashTypedData<TTypedData extends TypedData | {
+     [key: string]: unknown;
+ }, TPrimaryType extends string = string>({ domain: domain_, message, primaryType, types: types_, }: HashTypedDataParameters<TTypedData, TPrimaryType>): HashTypedDataReturnType;
+ export type HashDomainErrorType = HashStructErrorType | ErrorType;
+diff --git a/_types/utils/signature/recoverTypedDataAddress.d.ts b/_types/utils/signature/recoverTypedDataAddress.d.ts
+index 367c7de9995a36d5070fe6654ceec5ceb3008351..ff5f38a754e86542a0d058986b88b8499e0bf345 100644
+--- a/_types/utils/signature/recoverTypedDataAddress.d.ts
++++ b/_types/utils/signature/recoverTypedDataAddress.d.ts
+@@ -11,7 +11,7 @@ export type RecoverTypedDataAddressParameters<TTypedData extends TypedData | {
+ };
+ export type RecoverTypedDataAddressReturnType = Address;
+ export type RecoverTypedDataAddressErrorType = RecoverAddressErrorType | HashTypedDataErrorType | ErrorType;
+-export declare function recoverTypedDataAddress<const TTypedData extends TypedData | {
++export declare function recoverTypedDataAddress<TTypedData extends TypedData | {
+     [key: string]: unknown;
+ }, TPrimaryType extends string = string>({ domain, message, primaryType, signature, types, }: RecoverTypedDataAddressParameters<TTypedData, TPrimaryType>): Promise<RecoverTypedDataAddressReturnType>;
+ //# sourceMappingURL=recoverTypedDataAddress.d.ts.map
+\ No newline at end of file
+diff --git a/_types/utils/signature/verifyTypedData.d.ts b/_types/utils/signature/verifyTypedData.d.ts
+index 8b958f59368c3a58c771304aaa69782887c76255..4257a516bc8db775e1a6a1cb14f108b153a5c63b 100644
+--- a/_types/utils/signature/verifyTypedData.d.ts
++++ b/_types/utils/signature/verifyTypedData.d.ts
+@@ -27,7 +27,7 @@ export type VerifyTypedDataErrorType = IsAddressEqualErrorType | GetAddressError
+  * @param parameters - {@link VerifyTypedDataParameters}
+  * @returns Whether or not the signature is valid. {@link VerifyTypedDataReturnType}
+  */
+-export declare function verifyTypedData<const TTypedData extends TypedData | {
++export declare function verifyTypedData<TTypedData extends TypedData | {
+     [key: string]: unknown;
+ }, TPrimaryType extends string = string>({ address, domain, message, primaryType, signature, types, }: VerifyTypedDataParameters<TTypedData, TPrimaryType>): Promise<VerifyTypedDataReturnType>;
+ //# sourceMappingURL=verifyTypedData.d.ts.map
+\ No newline at end of file
+diff --git a/_types/utils/typedData.d.ts b/_types/utils/typedData.d.ts
+index d1676a360c69a92a2880e28c660171dee13324be..1a5a5d6d9118b2c965fe286c709142f53049a9af 100644
+--- a/_types/utils/typedData.d.ts
++++ b/_types/utils/typedData.d.ts
+@@ -7,7 +7,7 @@ import { type SizeErrorType } from './data/size.js';
+ import { type NumberToHexErrorType } from './encoding/toHex.js';
+ import { type HashDomainErrorType } from './signature/hashTypedData.js';
+ export type ValidateTypedDataErrorType = HashDomainErrorType | IsAddressErrorType | NumberToHexErrorType | SizeErrorType | ErrorType;
+-export declare function validateTypedData<const TTypedData extends TypedData | {
++export declare function validateTypedData<TTypedData extends TypedData | {
+     [key: string]: unknown;
+ }, TPrimaryType extends string = string>({ domain, message, primaryType, types: types_, }: TypedDataDefinition<TTypedData, TPrimaryType>): void;
+ export type GetTypesForEIP712DomainErrorType = ErrorType;

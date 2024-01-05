@@ -25,7 +25,7 @@ export default async function Page({ params }: { params: { id: string } }) {
       },
     },
   });
-
+  console.log(`POSTS: ${JSON.stringify(feed)}`);
   const credentials = await prisma.credential.findMany();
   const documents = await prisma.document.findMany();
   console.log(`CREDENTIALS: ${JSON.stringify(credentials)}`);

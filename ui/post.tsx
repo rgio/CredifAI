@@ -98,32 +98,32 @@ function CommentInput({ post, setPost }: { post: PostProps, setPost: React.Dispa
     console.log(`IN USE EFFECT: ${util.inspect(issueAttestation)}`);
   }, [issueAttestation]);
 
-  const handleGenerateAttestation = async (comment: any) => {
-    console.log(`GENERATE ATTESTATION SSX: ${util.inspect(ssx)}`);
-    //console.log(`SESSION: ${util.inspect(ssx!.userAuthorization.session)}`);
-    if (!ssx) return;
-    // if (!selectedConversation) return;
-    // setModalState(ModalState.AttestLoading);
+  // const handleGenerateAttestation = async (comment: any) => {
+  //   console.log(`GENERATE ATTESTATION SSX: ${util.inspect(ssx)}`);
+  //   //console.log(`SESSION: ${util.inspect(ssx!.userAuthorization.session)}`);
+  //   if (!ssx) return;
+  //   // if (!selectedConversation) return;
+  //   // setModalState(ModalState.AttestLoading);
 
-    const address = ssx.userAuthorization.address();
-    // console.log(`ADDRESS: ${address}`);
-    // console.log(`SESSION ADDRESS: ${ssx.userAuthorization.session && ssx.userAuthorization.session.address}`);
-    const sign = (x: any) => ssx.userAuthorization.signMessage(x);
-    const body = commentToAttestationText(comment);
-    const content = { body, title: comment.content };
-    console.log(`in handle generate attestation: ${util.inspect(issueAttestation)}`);
-    console.log(`CONTENT: ${util.inspect(content)}`);
-    console.log(`ADDRESS: ${util.inspect(address)}`);
-    console.log(`SIGN: ${util.inspect(sign)}`);
-    let jwt = await issueAttestation.issue(content, address || '', sign);
-    console.log(`JWT FROM ISSUE: ${jwt}`);
+  //   const address = ssx.userAuthorization.address();
+  //   // console.log(`ADDRESS: ${address}`);
+  //   // console.log(`SESSION ADDRESS: ${ssx.userAuthorization.session && ssx.userAuthorization.session.address}`);
+  //   const sign = (x: any) => ssx.userAuthorization.signMessage(x);
+  //   const body = commentToAttestationText(comment);
+  //   const content = { body, title: comment.content };
+  //   console.log(`in handle generate attestation: ${util.inspect(issueAttestation)}`);
+  //   console.log(`CONTENT: ${util.inspect(content)}`);
+  //   console.log(`ADDRESS: ${util.inspect(address)}`);
+  //   console.log(`SIGN: ${util.inspect(sign)}`);
+  //   let jwt = await issueAttestation.issue(content, address || '', sign);
+  //   console.log(`JWT FROM ISSUE: ${jwt}`);
 
 
-    // let jwt = await issue(content, address || '', sign);
-    // const jwt = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
-    // setCredential(jwt);
-    // setModalState(ModalState.AttestDownload);
-  };
+  //   // let jwt = await issue(content, address || '', sign);
+  //   // const jwt = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
+  //   // setCredential(jwt);
+  //   // setModalState(ModalState.AttestDownload);
+  // };
 
   async function handleSubmitComment(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -135,7 +135,7 @@ function CommentInput({ post, setPost }: { post: PostProps, setPost: React.Dispa
         body: JSON.stringify(body),
       });
 
-      handleGenerateAttestation({ opinion: opinion.value, content });
+      // handleGenerateAttestation({ opinion: opinion.value, content });
 
       setOpinion(opinions[0]);
       setContent("");

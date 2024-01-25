@@ -5,7 +5,10 @@ import { NextResponse } from 'next/server'
 export async function POST(req: Request) {
   try {
     const text = await req.text();
+    console.log(`TEXT IS ${text}`);
     const { path, title, description, credentialId, color } = JSON.parse(text);
+
+    console.log(`CREDENTIAL ID: ${credentialId}`);
 
     const result = await prisma.post.create({
       data: {
@@ -17,6 +20,8 @@ export async function POST(req: Request) {
         credential: { connect: { id: credentialId }},
       },
     });
+
+    console.log(`RESULT IS ${JSON.stringify(result)}`)
 
     //const path = 'test.pdf';
     const comments = [description];
@@ -46,6 +51,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ data: result }, { status: 200 })
   } catch (error) {
     console.log(error)
+    return NextResponse.json({ error: (error as Error).message }, { status: 500 })
   }
 
 }

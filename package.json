@@ -37,6 +37,7 @@
     "@wagmi/core": "^0.10.10",
     "@web3modal/ethereum": "2.7.0",
     "@web3modal/react": "2.7.0",
+    "@xixixao/uploadstuff": "0.0.5",
     "clsx": "1.2.1",
     "date-fns": "2.29.3",
     "dinero.js": "2.0.0-alpha.8",

@@ -23,7 +23,8 @@ export default async function Page({ params }: { params: { id: string } }) {
                 {/* <NoteAdd className="mx-auto h-12 w-12 text-gray-400"/> */}
                 <div className="flex flex-col">
                   <span className="mt-2 block text-sm font-semibold text-gray-900">{document.filename}</span>
-                  <a href={document.url} download>
+                  {/* <a href={document.url} download> */}
+                  <a href={'https://hallowed-warthog-351.convex.site/get_file?storageId=5ez68gbwez02bvt4zanwyqg29mhxtq0'} download>
                     <DownloadIcon className="mt-2 cursor-pointer mx-auto h-12 w-12 text-gray-400"/>
                   </a>
                 </div>

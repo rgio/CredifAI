@@ -83,7 +83,7 @@ export const SSXChild = ({ children }: { children: any }) => {
 
       const ssxConfig = {
         siweConfig: {
-          statement: 'Sign in to Sapien!',
+          statement: 'Sign in to CredifAI!',
         },
         modules: {
           storage: {

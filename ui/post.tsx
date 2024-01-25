@@ -15,6 +15,10 @@ export type PostProps = {
     name: string;
     email: string;
   } | null;
+  credential: {
+    name: string;
+    imageUrl: string;
+  } | null;
   content: string;
   published: boolean;
   comments: Comment[];
@@ -362,9 +366,9 @@ export default function Post({ postData }: { postData: PostProps }) {
               {/* <span className="flex mt-2 mr-2 items-center justify-center text-black text-sm text-bold">Requires </span> */}
               <div className="flex flex-row bg-gray-300 rounded-full px-2 mt-2" style={{width: 'fit-content'}}>
                 <div className="flex items-center">
-                  <img className="h-5 w-5 rounded-full" src={credential.imageUrl} alt="" />
+                  <img className="h-5 w-5 rounded-full" src={post.credential?.imageUrl || credential.imageUrl} alt="" />
                 </div>
-                <span className="mx-3 block text-sm py-1.5 text-gray-900 truncate">{credential.name}</span>
+                <span className="mx-3 block text-sm py-1.5 text-gray-900 truncate">{post.credential?.name || credential.name}</span>
               </div>
             </div>
             

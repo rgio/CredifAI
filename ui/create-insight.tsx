@@ -7,6 +7,7 @@ import { CirclePicker } from 'react-color';
 //import CirclePicker from "react-color"
 import { ExpandMore, ExpandLess } from '@mui/icons-material';
 import { useSSX } from 'ui/_ssx';
+import toast from 'react-hot-toast';
 
 type Credential = {
   id: string,
@@ -211,6 +212,11 @@ function CreateInsightForm({open, setOpen, credentials, documents, posts, setPos
     console.log(`HANDLE CREATE INSIGHT`)
     e.preventDefault();
 
+    if (!ssx) {
+      toast.error('You must connect your wallet to create an insight.');
+      return;
+    }
+
     const handleData = () => {
       (async () => {
         const body = {
@@ -254,39 +260,6 @@ function CreateInsightForm({open, setOpen, credentials, documents, posts, setPos
       handleData();
     });
 
-    // handleGenerateAttestation({ title, description, credential }).then((jwt) => { 
-    //   console.log(`JWT: ${jwt}`) 
-    //   const body = {
-    //     path: document.filename,
-    //     title: e.target.title.value,
-    //     description: e.target.description.value,
-    //     credentialId: credential.id,
-    //     color: color,
-    //   }
-  
-    //   const response = await fetch(
-    //     `/api/insights/create`,
-    //     {
-    //       method: 'POST',
-    //       headers: { "Content-Type": "application/json" },
-    //       body: JSON.stringify(body),
-    //     },
-    //   );
-  
-    //   const responseJson = await response.json();
-    //   const postData = responseJson.data;
-    //   postData.comments = [];
-    //   // console.log(`POSTS: ${util.inspect(posts)}`);
-    //   setPosts([...posts, postData]);
-  
-    //   console.log(`CREATE RESPONSE: ${util.inspect(postData)}`);
-    //   setTitle("");
-    //   setDescription("");
-    //   setColor("#BD4CA5");
-    //   setCredential(credentials[0]);
-    //   setOpen(false);
-    
-    // });
   }
 
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -331,7 +304,6 @@ function CreateInsightForm({open, setOpen, credentials, documents, posts, setPos
                     </div>
                   </div>
                   <div className="mt-3 mb-3 text-center sm:mt-5 px-12 pt-5 pb-4">
-
                     <form action="#" className="relative" onSubmit={handleCreateInsight}>
                       <label htmlFor="title" className="block text-left text-bold text-base mb-2 font-medium leading-6 text-gray-900">
                         Title
@@ -353,7 +325,7 @@ function CreateInsightForm({open, setOpen, credentials, documents, posts, setPos
                       </label>
                       <div className="overflow-hidden rounded-lg border border-gray-300 shadow-sm focus-within:border-indigo-500 focus-within:ring-1 focus-within:ring-indigo-500">
                         <textarea
-                          rows={2}
+                          rows={6}
                           name="description"
                           id="description"
                           className="block w-full resize-none border-0 pt-2.5 text-lg text-gray-900 placeholder:text-lg placeholder:text-gray-400 focus:ring-0"
@@ -363,7 +335,7 @@ function CreateInsightForm({open, setOpen, credentials, documents, posts, setPos
                         />
 
                         {/* Spacer element to match the height of the toolbar */}
-                        <div aria-hidden="true">
+                        {/* <div aria-hidden="true">
                           <div className="py-2">
                             <div className="h-9" />
                           </div>
@@ -373,7 +345,7 @@ function CreateInsightForm({open, setOpen, credentials, documents, posts, setPos
                               <div className="h-9" />
                             </div>
                           </div>
-                        </div>
+                        </div> */}
                       </div>
                       <DocumentSelector document={document} setDocument={setDocument} documents={documents}/>
                       <CredentialSelector credential={credential} setCredential={setCredential} credentials={credentials}/>

@@ -1,6 +1,7 @@
 'use client';
 
 import type { PutBlobResult } from '@vercel/blob';
+import { upload } from '@vercel/blob/client';
 import { useRef, useState } from 'react';
 import { NoteAdd } from '@mui/icons-material';
 
@@ -22,6 +23,7 @@ export default function UploadDocumentForm() {
   return (
     <form ref={formRef}
       onSubmit={async (event) => {
+        console.log(`UPLOADING`)
         event.preventDefault();
         if (!inputFileRef.current?.files) {
           throw new Error("No file selected");
@@ -29,17 +31,34 @@ export default function UploadDocumentForm() {
 
         const file = inputFileRef.current.files[0];
 
+        const res = await fetch('https://hallowed-warthog-351.convex.site/generate_upload_url');
+        const url = await res.text();
+        console.log(`data: ${util.inspect(url)}`)
+
+        const result = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": file!.type },
+          body: file,
+        });
+        const { storageId } = await result.json();
+
+        console.log(`STORAGE ID: ${util.inspect(storageId)}`);
+
         const response = await fetch(
-          `/api/documents/upload?filename=${file.name}`,
+          `/api/documents/upload?filename=${file.name}&storageId=${storageId}`,
           {
             method: 'POST',
-            body: file,
           },
         );
 
-        const newBlob = (await response.json()) as PutBlobResult;
+        // const newBlob = (await response.json()) as PutBlobResult;
 
-        setBlob(newBlob);
+        // const newBlob = await upload(file.name, file, {
+        //   access: 'public',
+        //   handleUploadUrl: '/api/documents/upload',
+        // });
+
+        // setBlob(newBlob);
       }}
     >
     <input name="file" ref={inputFileRef} onChange={handleFileChange} type="file" required style={{display: 'none'}} />

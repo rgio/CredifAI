@@ -14,6 +14,12 @@ export default async function Page({ params }: { params: { id: string } }) {
           name: true,
         },
       },
+      credential: {
+        select: {
+          name: true,
+          imageUrl: true,
+        }
+      },
       comments: {
         include: {
           author: {

@@ -26,7 +26,10 @@ export default function Credential({ credential }: { credential: CredentialProps
         <a href="#" className="focus:outline-none">
           <span className="absolute inset-0" aria-hidden="true" />
           <p className="text-sm font-medium text-gray-900">{credential.title}</p>
-          <p className="truncate text-sm text-gray-500">User has verified their {credential.title} account</p>
+          { (credential.title == 'GitHub' || credential.title == 'Email') ?
+          <p className="truncate text-sm text-gray-500">User has verified their {credential.title} account</p> :
+          <p className="truncate text-sm text-gray-500">verified {credential.title}</p>
+          }
         </a>
       </div>
     </div>

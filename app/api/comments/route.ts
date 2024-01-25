@@ -19,6 +19,8 @@ export async function POST(req: Request) {
       },
     });
 
+    console.log(`result: ${JSON.stringify(result)}`);
+
     // const path = 'test.pdf';
     // const comments = [content];
     // const sources = ['rob@truedot.ai'];

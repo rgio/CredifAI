@@ -15,11 +15,7 @@ async function getData() {
       "Content-Type": "application/json",
     },
   });
-
-  console.log(`RES: ${JSON.stringify(res)}`)
-  const text = await res.text();
-  console.log(`TEXT: ${text}`);
-
+  
   if (!res.ok) {
     const text = await res.text(); // Get the response as text
     console.error("Failed to fetch JSON:", text); // Log the text to see what's returned

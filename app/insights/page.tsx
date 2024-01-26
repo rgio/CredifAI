@@ -17,6 +17,7 @@ async function getData() {
     },
   });
 
+  console.log(`RES: ${JSON.stringify(res)}`)
   const text = await res.text();
   console.log(`TEXT: ${text}`);
 

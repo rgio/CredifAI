@@ -4,6 +4,8 @@ import DownloadIcon from '@mui/icons-material/Download';
 
 const util = require('util');
 
+export const dynamic = "force-dynamic";
+
 export default async function Page({ params }: { params: { id: string } }) {
   const documents = await prisma.document.findMany();
 

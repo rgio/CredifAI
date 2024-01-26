@@ -33,7 +33,7 @@ export async function POST(req: Request) {
       sources = ['AI Researcher @Google'];
     }
    
-    const embeddingEndpoint = 'http://localhost:5000/add_verified_comments'; // Replace [FLASK_SERVER_URL] with your Flask server's URL
+    const embeddingEndpoint = 'https://credifai-backend.onrender.com/add_verified_comments'; // Replace [FLASK_SERVER_URL] with your Flask server's URL
     const embeddingResponse = await fetch(embeddingEndpoint, {
       method: 'POST',
       headers: {

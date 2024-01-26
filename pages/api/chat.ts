@@ -20,7 +20,7 @@ const handler = async (req: Request): Promise<Response> => {
     const { model, messages, key, prompt, temperature } = body;
 
     const path = 'test.pdf';
-    const embeddingEndpoint = 'http://localhost:5000/chat_document'; // Replace [FLASK_SERVER_URL] with your Flask server's URL
+    const embeddingEndpoint = 'https://credifai-backend.onrender.com/chat_document'; // Replace [FLASK_SERVER_URL] with your Flask server's URL
     const embeddingResponse = await fetch(embeddingEndpoint, {
       method: 'POST',
       headers: {

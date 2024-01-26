@@ -3,6 +3,8 @@ import prisma from '#/lib/prisma';
 import CreateInsight from '#/ui/create-insight';
 import PostFeed from '#/ui/post-feed';
 
+export const dynamic = "force-dynamic";
+
 async function getData() {
   // Call an external API endpoint to get posts
   // You can use your prisma client here if you're fetching from your own database
@@ -15,7 +17,7 @@ async function getData() {
       "Content-Type": "application/json",
     },
   });
-  
+
   if (!res.ok) {
     const text = await res.text(); // Get the response as text
     console.error("Failed to fetch JSON:", text); // Log the text to see what's returned

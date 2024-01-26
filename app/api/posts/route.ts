@@ -34,9 +34,13 @@ export async function GET(req: Request) {
   const credentials = await prisma.credential.findMany();
   const documents = await prisma.document.findMany();
 
-  return NextResponse.json({
+  const response = NextResponse.json({
     posts,
     credentials,
     documents,
-  });
+  })
+
+  response.headers.set('Access-Control-Allow-Origin', '*');
+
+  return response;
 }

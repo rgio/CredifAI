@@ -11,6 +11,12 @@ async function getData() {
   const url = process.env.LOCAL ? "http://localhost:3000/api/posts" : "https://" + process.env.VERCEL_URL + "/api/posts";
   const res = await fetch(url);
 
+  if (!res.ok) {
+    const text = await res.text(); // Get the response as text
+    console.error("Failed to fetch JSON:", text); // Log the text to see what's returned
+    throw new Error(`HTTP error! Status: ${res.status}`);
+  }
+
   const data = await res.json();
 
   console.log(`DATA: ${JSON.stringify(data)}`);

@@ -10,7 +10,8 @@
     "start": "next start",
     "test": "yarn prettier:check && yarn lint",
     "db:up": "docker-compose up -d",
-    "db:down": "docker-compose down"
+    "db:down": "docker-compose down",
+    "postinstall": "prisma generate"
   },
   "git": {
     "pre-commit": "lint-staged"

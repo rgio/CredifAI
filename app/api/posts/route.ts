@@ -41,6 +41,7 @@ export async function GET(req: Request) {
   })
 
   response.headers.set('Access-Control-Allow-Origin', '*');
+  response.headers.set('Vary', 'origin');
 
   return response;
 }

@@ -7,7 +7,10 @@ import PostFeed from '#/ui/post-feed';
 async function getData() {
   // Call an external API endpoint to get posts
   // You can use your prisma client here if you're fetching from your own database
-  const res = await fetch(`${process.env.API_ROOT}/api/posts`);
+  // const res = await fetch(`${process.env.API_ROOT}/api/posts`);
+  const url = process.env.LOCAL ? "http://localhost:3000/api/posts" : "https://" + process.env.VERCEL_URL + "/api/posts";
+  const res = await fetch(url);
+
   const data = await res.json();
 
   console.log(`DATA: ${JSON.stringify(data)}`);
@@ -22,40 +25,6 @@ async function getData() {
 }
 
 export default async function Page() {
-  // const feed = await prisma.post.findMany({
-  //   where: {
-  //     published: true,
-  //   },
-  //   include: {
-  //     author: {
-  //       select: {
-  //         name: true,
-  //       },
-  //     },
-  //     credential: {
-  //       select: {
-  //         name: true,
-  //         imageUrl: true,
-  //       }
-  //     },
-  //     comments: {
-  //       include: {
-  //         author: {
-  //           select: {
-  //             name: true,
-  //           },
-  //         }
-  //       }
-  //     },
-  //   },
-  // });
-  // console.log(`POSTS: ${JSON.stringify(feed)}`);
-  // const credentials = await prisma.credential.findMany();
-  // const documents = await prisma.document.findMany();
-  // console.log(`CREDENTIALS: ${JSON.stringify(credentials)}`);
-  // const res = await fetch(`/api/posts`);
-  // const data = await res.json();
-  // console.log(`DATA: ${JSON.stringify(data)}`);
   const { feed, credentials, documents } = await getData();
 
   return (

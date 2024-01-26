@@ -4,37 +4,44 @@ import CreateInsight from '#/ui/create-insight';
 import PostFeed from '#/ui/post-feed';
 
 export default async function Page({ params }: { params: { id: string } }) {
-  const feed = await prisma.post.findMany({
-    where: {
-      published: true,
-    },
-    include: {
-      author: {
-        select: {
-          name: true,
-        },
-      },
-      credential: {
-        select: {
-          name: true,
-          imageUrl: true,
-        }
-      },
-      comments: {
-        include: {
-          author: {
-            select: {
-              name: true,
-            },
-          }
-        }
-      },
-    },
+  // const feed = await prisma.post.findMany({
+  //   where: {
+  //     published: true,
+  //   },
+  //   include: {
+  //     author: {
+  //       select: {
+  //         name: true,
+  //       },
+  //     },
+  //     credential: {
+  //       select: {
+  //         name: true,
+  //         imageUrl: true,
+  //       }
+  //     },
+  //     comments: {
+  //       include: {
+  //         author: {
+  //           select: {
+  //             name: true,
+  //           },
+  //         }
+  //       }
+  //     },
+  //   },
+  // });
+  // console.log(`POSTS: ${JSON.stringify(feed)}`);
+  // const credentials = await prisma.credential.findMany();
+  // const documents = await prisma.document.findMany();
+  // console.log(`CREDENTIALS: ${JSON.stringify(credentials)}`);
+  const res = await fetch(`/api/posts`, {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
   });
-  console.log(`POSTS: ${JSON.stringify(feed)}`);
-  const credentials = await prisma.credential.findMany();
-  const documents = await prisma.document.findMany();
-  console.log(`CREDENTIALS: ${JSON.stringify(credentials)}`);
+  const data = await res.json();
+  console.log(`DATA: ${JSON.stringify(data)}`);
+  const { feed, credentials, documents } = data;
 
   return (
     <div className="page">

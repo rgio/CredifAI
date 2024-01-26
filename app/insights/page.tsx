@@ -9,8 +9,13 @@ async function getData() {
   // You can use your prisma client here if you're fetching from your own database
   // const res = await fetch(`${process.env.API_ROOT}/api/posts`);
   const url = process.env.LOCAL ? "http://localhost:3000/api/posts" : "https://" + process.env.VERCEL_URL + "/api/posts";
-  console.log(`VERCEL URL: ${process.env.VERCEL_URL}`)
-  const res = await fetch(url);
+  console.log(`VERCEL URL: ${url}`)
+  const res = await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
 
   if (!res.ok) {
     const text = await res.text(); // Get the response as text

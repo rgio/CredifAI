@@ -3,7 +3,25 @@ import prisma from '#/lib/prisma';
 import CreateInsight from '#/ui/create-insight';
 import PostFeed from '#/ui/post-feed';
 
-export default async function Page({ params }: { params: { id: string } }) {
+// This function gets called at build time
+async function getData() {
+  // Call an external API endpoint to get posts
+  // You can use your prisma client here if you're fetching from your own database
+  const res = await fetch(`${process.env.API_ROOT}/api/posts`);
+  const data = await res.json();
+
+  console.log(`DATA: ${JSON.stringify(data)}`);
+
+  // By returning { props: data }, the Page component
+  // will receive `data` as a prop at build time
+  return {
+    feed: data.posts,
+    credentials: data.credentials,
+    documents: data.documents,
+  };
+}
+
+export default async function Page() {
   // const feed = await prisma.post.findMany({
   //   where: {
   //     published: true,
@@ -35,13 +53,10 @@ export default async function Page({ params }: { params: { id: string } }) {
   // const credentials = await prisma.credential.findMany();
   // const documents = await prisma.document.findMany();
   // console.log(`CREDENTIALS: ${JSON.stringify(credentials)}`);
-  const res = await fetch(`/api/posts`, {
-    method: "GET",
-    headers: { "Content-Type": "application/json" },
-  });
-  const data = await res.json();
-  console.log(`DATA: ${JSON.stringify(data)}`);
-  const { feed, credentials, documents } = data;
+  // const res = await fetch(`/api/posts`);
+  // const data = await res.json();
+  // console.log(`DATA: ${JSON.stringify(data)}`);
+  const { feed, credentials, documents } = await getData();
 
   return (
     <div className="page">

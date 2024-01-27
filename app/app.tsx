@@ -13,7 +13,7 @@ export default function App({
     <div className="App">
       <TopBar/>
       <GlobalNav/>
-      <div className="lg:pl-72 h-screen">
+      <div className="lg:pl-72 min-h-screen">
         <Toaster position="bottom-left" />
         {children}
       </div>

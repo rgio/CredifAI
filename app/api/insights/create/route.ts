@@ -45,8 +45,10 @@ export async function POST(req: Request) {
         sources: sources
       })
     });
-    const json = await embeddingResponse.json();
-    console.log(`RESPONSE IS ${JSON.stringify(json)}`)
+
+    // const rtext = await embeddingResponse.text();
+    // //const json = await embeddingResponse.json();
+    // console.log(`RESPONSE IS ${JSON.stringify(rtext)}`)
 
     return NextResponse.json({ data: result }, { status: 200 })
   } catch (error) {

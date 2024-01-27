@@ -64,9 +64,12 @@ export async function POST(request: Request): Promise<NextResponse> {
     console.log(`EXTRACTED TEXT: ${extractedText}`)
 
     const embeddingEndpoint = 'https://credifai-backend.onrender.com/embed_document'; // Replace [FLASK_SERVER_URL] with your Flask server's URL
-    const embeddingResponse = fetch(`${embeddingEndpoint}?document_name=${encodeURIComponent(filename)}&text=${encodeURIComponent(extractedText)}`, {
+    const embeddingResponse = await fetch(`${embeddingEndpoint}?document_name=${encodeURIComponent(filename)}&text=${encodeURIComponent(extractedText)}`, {
       method: 'POST'
     });
+
+    // const text = await embeddingResponse.text();
+    // console.log(`EMBEDDING RESPONSE: ${text}`);
 
   } else {
     console.error('Filename is missing');

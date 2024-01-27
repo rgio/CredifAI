@@ -31,8 +31,13 @@ const handler = async (req: Request): Promise<Response> => {
         initial_prompt: messages[messages.length-1].content,
       })
     });
+
+    // const rtext = await embeddingResponse.text();
+    // console.log(`RESPONSE IS ${JSON.stringify(rtext)}`);
+    // return new Response(JSON.stringify({data : rtext }), { status: 200 });
+
     const json = await embeddingResponse.json();
-    //.log(`DATA IS: ${JSON.stringify(json)}`);
+    //console.log(`DATA IS: ${JSON.stringify(json)}`);
     return new Response(JSON.stringify({data : json.response }), { status: 200 });
     // const { model, messages, prompt, temperature } = (await req.json()) as ChatBody;
     //const key = process.env.OPENAI_API_KEY

@@ -33,6 +33,7 @@ import { ChatLoader } from './chat-loader';
 // import { SystemPrompt } from './SystemPrompt';
 // import { TemperatureSlider } from './Temperature';
 import { MemoizedChatMessage } from './memoized-chat-message';
+// import { init } from '@dqbd/tiktoken/lite/init';
 
 interface Props {
   stopConversationRef: MutableRefObject<boolean>;
@@ -57,6 +58,20 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
     handleUpdateConversation,
     dispatch: homeDispatch,
   } = useContext(HomeContext);
+
+  useEffect(() => {
+    const initialConversation: Conversation = {"id":"2421c854-7dea-435e-8f92-a275a8f5fef3","name":"Marketing Report Insights","messages":[{"role":"user","content":"What are the technologies marketers should be adopting and what are the challenges in adopting them?"},{"role":"assistant","content":"Based on the insights provided, we can see that experts in both the marketing and AI industries agree with the implications in the document that adoption of data-centric methods, like Artificial Intelligence (AI), will be vital for growth. A Marketing Director at Target plans to invest heavily in data-centric methodologies through hiring and internal training programs, indicating challenges might stem from the need for new skillsets and knowledge within an organization. \\n\\nAdditionally, an AI researcher at Google suggests that industries, including marketing, will significantly benefit from AI and that there are opportunities to integrate technologies like Language Learning Models (LLMs) into existing marketing departments. This suggests that the challenges in technology adoption might be overcome by convenience provided by AI's like ChatGPT that can act as a data scientist, thus minimizing the challenges of diving into data science details or hiring competent data scientists.\\n\\nRelated Insights:\\n* Wide adoption of data-centric methods, like AI, are key for growth in the marketing industry, implying challenges could arise from the need for new skillsets and knowledge (Source: Marketing Director @ Target) \\n* Opportunities exist to integrate technologies like Language Learning Models into existing marketing departments, which can minimize challenges in technology adoption (Source: AI Researcher @ Google)"}],"model":{"id":"gpt-3.5-turbo","name":"GPT-3.5","maxLength":12000,"tokenLimit":4000},"prompt":"You are ChatGPT, a large language model trained by OpenAI. Follow the user's instructions carefully. Respond using markdown.","temperature":1,"folderId":null};
+    saveConversation(initialConversation);
+    homeDispatch({
+      field: 'selectedConversation',
+      value: initialConversation,
+    });
+    const updatedConversations: Conversation[] = [initialConversation];
+    homeDispatch({ field: 'conversations', value: updatedConversations });
+    saveConversations(updatedConversations);
+    homeDispatch({ field: 'messageIsStreaming', value: false });
+  }, []);
+
 
   const [currentMessage, setCurrentMessage] = useState<Message>();
   const [autoScrollEnabled, setAutoScrollEnabled] = useState<boolean>(true);
@@ -466,7 +481,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       ) : (
         <>
           <div
-            className="max-h-full overflow-x-hidden"
+            className="max-h-full overflow-x-hidden overflow-y-scroll"
             ref={chatContainerRef}
             onScroll={handleScroll}
           >
